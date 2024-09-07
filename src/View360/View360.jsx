@@ -1,186 +1,143 @@
-import React, { useEffect, useRef, useState } from 'react'
-import i1 from './../assets/11.jpg'
-import i2 from './../assets/12.jpg'
-import i3 from './../assets/13.jpg'
-import i4 from './../assets/14.jpg'
-import { Canvas, useFrame, useLoader } from "@react-three/fiber";
-import { TextureLoader } from 'three/src/loaders/TextureLoader'
-
+import React, { useContext, useEffect, useRef, useState } from 'react'
+import { Canvas } from "@react-three/fiber";
 import { OrbitControls, TransformControls } from '@react-three/drei'
 import { PerspectiveCamera } from '@react-three/drei'
-import { BackSide } from "three";
-
-function Box(props) {
-  // This reference will give us direct access to the mesh
-  const meshRef = useRef()
-  // Set up state for the hovered and active state
-  const [hovered, setHover] = useState(false)
-  const [active, setActive] = useState(false)
-  // Subscribe this component to the render-loop, rotate the mesh every frame
-  // Return view, these are regular three.js elements expressed in JSX
-  return (
-    <mesh
-      castShadow
-      {...props}
-      scale={active ? 1.5 : 1}
-      onClick={(event) => {
-        props.onPress()
-        setActive(!active)
-      }}
-      onPointerOver={(event) => setHover(true)}
-      onPointerOut={(event) => setHover(false)}>
-      <boxGeometry args={[0.07, 0.07, 0.07]} />
-      <meshStandardMaterial color={hovered ? 'hotpink' : 'orange'} />
-    </mesh>
-  )
-}
+import Box from '../UI/Box.jsx'
+import Room from '../UI/Room.jsx'
+import { AppContext } from '../AppState.jsx'
+import SelectImage from '../UI/SelectImage.jsx'
 
 
 
 export default function View360() {
+  const { image, setImage, setModel, images, setImages, NODE, deleteNode } = useContext(AppContext)
 
-  const colorMap1 = useLoader(TextureLoader, i1)
-  const colorMap2 = useLoader(TextureLoader, i2)
-  const colorMap3 = useLoader(TextureLoader, i3)
-  const colorMap4 = useLoader(TextureLoader, i4)
+  const addNode = (firstNode, direction) => {
+    setModel(<SelectImage firstNode={firstNode} direction={direction} />)
+  }
 
-  const images = [
-    {
-      image: colorMap1,
-      childrens: [
-        {
-          id: 1,
-          type: 'front',
-          child: 1
-        },
-      ]
-
-    },
-    {
-      image: colorMap2,
-      childrens: [
-        {
-          id: 1,
-          type: 'back',
-          child: 2
-        },
-        {
-          id: 2,
-          type: 'front',
-          child: 0
-        },
-        {
-          id: 3,
-          type: 'top',
-          child: 1
-        },
-      ]
-    },
-    {
-      image: colorMap3,
-      childrens: [
-        {
-          id: 1,
-          type: 'back',
-          child: 3
-        },
-        {
-          id: 2,
-          type: 'front',
-          child: 1
-        },
-      ]
-    },
-    {
-      id: 4,
-      image: colorMap4,
-      childrens: [
-        {
-          id: 1,
-          type: 'back',
-          child: 0
-        },
-        {
-          id: 2,
-          type: 'front',
-          child: 2
-        },
-      ]
-    },
-  ]
-  const [counter, setCounter] = useState(0)
-  const [colorMap, setColorMap] = useState(null)
+  const [node, setNode] = useState(null)
   const [boxes, setBoxes] = useState([])
+  const [edit, setEdit] = useState(false)
+  const [graph, setGraph] = useState(false)
+  const [showLeftBar, setShowLeftBar] = useState(false)
+  const [showRightBar, setShowRightBar] = useState(false)
+
+
   useEffect(() => {
     const boxes = []
-    for (let i = 0; i < images[counter].childrens.length; i++) {
-      switch (images[counter].childrens[i].type) {
-        case 'front':
-          boxes.push(
-            <Box key={images[counter].childrens[i].id} position={[0.9, -0.4, 0]} onPress={() => {
-              setCounter(images[counter].childrens[i].child)
-            }} />
-          )
-          break;
-        case 'back':
-          boxes.push(
-            <Box key={images[counter].childrens[i].id} position={[-0.9, -0.4, 0]} onPress={() => {
-              console.log('images[counter].childrens[i].child : ' , images[counter].childrens[i]);
-              setCounter(images[counter].childrens[i].child)
-            }} />
-          )
-          break;
-        case 'left':
-          boxes.push(
-            <Box key={images[counter].childrens[i].id} position={[0, -0.4, -0.9]} onPress={() => {
-              setCounter(images[counter].childrens[i].child)
-            }} />
-          )
-          break;
-        case 'right':
-          boxes.push(
-            <Box key={images[counter].childrens[i].id} position={[0, -0.4, 0.9]} onPress={() => {
-              setCounter(images[counter].childrens[i].child)
-            }} />
-          )
-          break;
-        case 'top':
-          boxes.push(
-            <Box key={images[counter].childrens[i].id} position={[0, 1, 0]} onPress={() => {
-              setCounter(images[counter].childrens[i].child)
-            }} />
-          )
-          break;
-        case 'bottom':
-          boxes.push(
-            <Box key={images[counter].childrens[i].id} position={[0, -1, 0]} onPress={() => {
-              setCounter(images[counter].childrens[i].child)
-            }} />
-          )
-          break;
+
+    if (node) {
+      for (let i = 0; i < node.childrens.length; i++) {
+        if (!edit) {
+          if (node.childrens[i].child) {
+            boxes.push(
+              <Box rotation={node.childrens[i].direction.rotation} key={node.childrens[i].id} position={node.childrens[i].direction.location} onPress={() => {
+                const newNode = images.find(nodeL => nodeL.id == node.childrens[i].child)
+
+                setNode(newNode)
+              }} />
+            )
+          }
+        }
+        else {
+          if (!node.childrens[i].child) {
+            boxes.push(
+              <Box rotation={node.childrens[i].direction.rotation} key={node.childrens[i].id} position={node.childrens[i].direction.location} onPress={() => {
+                addNode(node, node.childrens[i].direction)
+              }} />
+            )
+
+          }
+          else {
+            boxes.push(
+              <Box delete={true} rotation={node.childrens[i].direction.rotation} key={node.childrens[i].id} position={node.childrens[i].direction.location} onPress={() => {
+                deleteNode(node.childrens[i].child)
+                // console.log(node.childrens[i].child);
+
+              }} />
+            )
+          }
+        }
       }
-
+      setBoxes(boxes)
     }
-    setBoxes(boxes)
-    setColorMap(images[counter].image)
-  }, [counter])
+  }, [node, edit, images])
 
-  console.log(counter);
+
+  useEffect(() => {
+    if (images.length > 0 && !node) {
+      setNode(images[0])
+    }
+  }, [images])
+  console.log(images);
+  console.log(node);
+
 
   return (
-    <Canvas className='relative w-screen h-screen'>
-      <OrbitControls target={[0, 0, 0]} enableDamping />
-      <PerspectiveCamera makeDefault position={[0.1, 0, 0]} />
+    <div className='relative w-full h-full flex flex-row'>
+
+      <div className='absolute top-0 w-[15%] h-full bg-[#C1C1C1] z-10' style={{ left: showLeftBar ? '0' : '-15%' }}>
+        <div onClick={() => setShowLeftBar(prev => !prev)} className='absolute top-1/2 -right-6 w-6 h-20 bg-[#C1C1C1] rounded-tr-lg rounded-br-lg hover:cursor-pointer'>
+
+        </div>
+      </div>
+
+      <div className='absolute  top-0 w-[15%] h-full bg-[#C1C1C1] z-10' style={{ right: showRightBar ? '0' : '-15%' }}>
+        <div onClick={() => setShowRightBar(prev => !prev)} className='absolute top-1/2 -left-6 w-6 h-20 bg-[#C1C1C1] rounded-tl-lg rounded-bl-lg hover:cursor-pointer'>
+
+        </div>
+        <div className='absolute  bottom-10 -left-24 flex flex-row justify-center items-center'>
+
+          <div onClick={() => setEdit(prev => !prev)} className='relative bg-[#C1C1C1] m-1 w-10 aspect-square flex justify-center items-center rounded-full z-10'>
+            {edit ?
+              <p className='relative text-[11px] font-black text-black z-10 select-none'>
+                Show
+              </p>
+              :
+              <p className='relative text-[11px] font-black text-black z-10 select-none'>
+                Edit
+              </p>
+            }
+          </div>
+          <div onClick={() => setGraph(prev => !prev)} className='relative bg-[#C1C1C1] m-1 w-10 aspect-square flex justify-center items-center rounded-full z-10'>
+            {graph ?
+              <p className='relative text-[11px] font-black text-black z-10 select-none'>
+                360
+              </p>
+              :
+              <p className='relative text-[11px] font-black text-black z-10 select-none'>
+                Graph
+              </p>
+            }
+          </div>
+        </div>
+      </div>
+
+
       {
-        boxes
+        images.length == 0 ?
+          <div className='relative w-full h-full flex flex-col justify-center items-center'>
+            <p className='relative text-center text-[#ffffff] text-3xl'>No Photo, Please Enter The First Node</p>
+            <button onClick={() => {
+              setModel(<SelectImage />)
+            }} className='relative w-[200px] flex justify-center items-center rounded-full bg-white my-4'>
+              <p className='relative text-[#121212] text-center text-lg py-4'>Select Image</p>
+            </button>
+          </div>
+          :
+          node &&
+          <Canvas className='relative w-screen h-screen'>
+            <OrbitControls target={[0, 0, 0]} />
+            <PerspectiveCamera makeDefault position={[0.1, 0, 0]} />
+            <TransformControls/>
+            {
+              boxes
+            }
+            <ambientLight intensity={1} />
+            <Room image={node.image} />
+          </Canvas>
       }
-      <ambientLight intensity={1} />
-
-      <mesh position={[0, 0, 0]} receiveShadow>
-        <sphereGeometry args={[1, 100]} />
-        <meshStandardMaterial map={images[counter].image} side={BackSide} />
-      </mesh>
-
-    </Canvas>
+    </div>
   )
 }

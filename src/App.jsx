@@ -1,16 +1,14 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
-import View360 from './View360/View360'
-
+import { StateProvider } from './AppState'
+import Layout from './Layout'
 function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <div className="realtive w-screen h-screen">
-      <View360/>
-    </div>
+    <StateProvider>
+      <Layout/>
+    </StateProvider>
   )
 }
 
