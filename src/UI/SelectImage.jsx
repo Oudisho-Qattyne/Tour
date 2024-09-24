@@ -7,47 +7,75 @@ function SelectImage({firstNode , direction}) {
     const addNode = () => {
         
         let newNode = { ...NODE }
-        newNode.id = findMaxId(images) + 1
+        if(firstNode){
+            newNode.id = findMaxId(images) + 1
+        }
+        else{
+            newNode.id = 1
+        }
         newNode.image = image.image.value
         let newImages = [...images, newNode]
 
         if(firstNode){
+            let newPosition = [0,0,0]
+
+            newPosition = [
+                direction.location[0] !=0 ? direction.location[0] > 0 ? firstNode.position[0] + 4 : firstNode.position[0] - 4 : firstNode.position[0],
+                direction.location[1] + 0.4 != 0 ? direction.location[1] + 0.4 > 0 ? firstNode.position[1] + 4 : firstNode.position[1] - 4 : firstNode.position[1],
+                direction.location[2]  != 0 ? direction.location[2]  > 0 ? firstNode.position[2] + 4 : firstNode.position[2] - 4 : firstNode.position[2],
+
+            ]
+            console.log(newPosition);
+            
             let newChildForNewNode = newNode.childrens.find(child => child.direction.type == direction.opposite)
             newChildForNewNode.child = firstNode.id
             let newChildForFirstNode = firstNode.childrens.find(child => child.direction.type == direction.type)
             newChildForFirstNode.child = newNode.id
+            newNode.position = newPosition
         }
 
         setImages(newImages)
         setModel(null)
     }
+    const openImage = (e) => {
+        const file = e.target.files[0]
+        const reader = new FileReader()
+        reader.onload = e => {
+            const imageUrl = e.target.result
+            setImage(prev => ({
+                ...prev,
+                image: {
+                    ...prev.image,
+                    value: imageUrl,
+                }
+            }))
+        }
+
+        if(file){
+            reader.readAsDataURL(file)
+        }
+    }
+    console.log(image);
+    
     return (
-        <dev className='relative w-full h-full p-10 justify-between items-center'>
+        <div className='relative w-full h-full p-10 justify-between items-center'>
             {
                 image &&
                 Object.keys(image).map(field => {
                     return (
-                        <Input {...image[field]} onChange={(e) => {
-                            setImage(prev => ({
-                                ...prev,
-                                image: {
-                                    ...prev.image,
-                                    value: URL.createObjectURL(e.target.files[0]),
-                                }
-                            }))
-                        }} />
+                        <Input {...image[field]} onChange={openImage} />
                     )
                 }
                 )
             }
-            <dev className='relative w-full min-h-fit flex justify-center items-center p-5'>
+            <div className='relative w-full min-h-fit flex justify-center items-center p-5'>
                 {
                     image.image.value &&
                     <img className='relative w-full rounded-lg shadow-lg' src={image.image.value} />
                 }
-            </dev>
-            <dev className='relative w-full flex flex-row justify-evenly items-center'>
-                <dev className='relative w-1/2 p-5'>
+            </div>
+            <div className='relative w-full flex flex-row justify-evenly items-center'>
+                <div className='relative w-1/2 p-5'>
                     <button onClick={() => {
                         setImage(prev => ({
                             ...prev,
@@ -60,14 +88,14 @@ function SelectImage({firstNode , direction}) {
                     }} className='relative w-full flex justify-center items-center rounded-full bg-white border border-1 border-[#C1C1C1]'>
                         <p className='relative text-[#C1C1C1] py-3'>Cancel</p>
                     </button>
-                </dev>
-                <dev className='relative w-1/2 p-5'>
+                </div>
+                <div className='relative w-1/2 p-5'>
                     <button onClick={() => addNode()}className='relative w-full flex justify-center items-center rounded-full bg-black '>
                         <p className='relative text-[#FFFFFF] py-3'>Okay</p>
                     </button>
-                </dev>
-            </dev>
-        </dev>
+                </div>
+            </div>
+        </div>
     )
 }
 
