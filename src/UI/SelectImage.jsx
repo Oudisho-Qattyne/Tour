@@ -46,7 +46,9 @@ function SelectImage({firstNode , direction}) {
                 ...prev,
                 image: {
                     ...prev.image,
-                    value: imageUrl,
+                    // value: imageUrl,
+                    value: URL.createObjectURL(file),
+
                 }
             }))
         }
