@@ -29,6 +29,24 @@ export default function View360() {
     })
   }
 
+  const handleTouch = (e) => {
+    const touches = e.touches
+    if(touches.length == 2){
+      const distance = Math.hypot(touches[0].clientX - touches[1].clientX , touches[0].clientY - touches[1].clientY)
+      console.log(distance);
+      setFov(prev => {
+        if ((prev + distance / 100) > 60 || (prev + distance / 100) < 1) {
+          return prev
+        }
+        else {
+          return prev + distance / 100
+        }
+      })
+      
+    }
+  }
+
+
   useEffect(() => {
     const boxes = []
 
@@ -81,8 +99,8 @@ export default function View360() {
       {
 
         node &&
-        <Canvas onWheel={handleWheel} className='relative w-full min-h-full'>
-          <OrbitControls enablePan={false} enableZoom={false} target={[0, 0, 0]} />
+        <Canvas handleTouch={handleTouch} onWheel={handleWheel} className='relative w-full min-h-full'>
+          <OrbitControls enablePan={false} enableZoom={false}  />
           <PerspectiveCamera makeDefault position={[0.1, 0, 0]} fov={fov} />
           {
             boxes
