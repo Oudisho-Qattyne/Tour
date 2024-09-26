@@ -9,8 +9,6 @@ function Room({ image, position, args }) {
     //  map = useLoader(TextureLoader, image )
     const textureLoader = new TextureLoader()
     textureLoader.load(image, texture => {
-      console.log(texture);
-      
       texture.wrapS = RepeatWrapping
       texture.wrapT = RepeatWrapping
       texture.repeat.x = -1

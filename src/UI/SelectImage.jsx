@@ -5,7 +5,17 @@ import { AppContext } from '../AppState'
 function SelectImage({firstNode , direction}) {
     const { image, setImage , images , setImages , NODE , setModel , findMaxId} = useContext(AppContext)
     const addNode = () => {
-        
+        if(!image.image.value){
+            setImage(prev => ({
+                ...prev,
+                image:{
+                    ...prev.image,
+                    error:'required'
+                }
+            }))
+        }
+        else{
+
         let newNode = { ...NODE }
         if(firstNode){
             newNode.id = findMaxId(images) + 1
@@ -25,7 +35,6 @@ function SelectImage({firstNode , direction}) {
                 direction.location[2]  != 0 ? direction.location[2]  > 0 ? firstNode.position[2] + 4 : firstNode.position[2] - 4 : firstNode.position[2],
 
             ]
-            console.log(newPosition);
             
             let newChildForNewNode = newNode.childrens.find(child => child.direction.type == direction.opposite)
             newChildForNewNode.child = firstNode.id
@@ -35,7 +44,17 @@ function SelectImage({firstNode , direction}) {
         }
 
         setImages(newImages)
+        setImage(prev => ({
+            ...prev,
+            image:{
+                ...prev.image,
+                value:'',
+                error:''
+            }
+        }))
         setModel(null)
+    }
+
     }
     const openImage = (e) => {
         const file = e.target.files[0]
@@ -46,8 +65,9 @@ function SelectImage({firstNode , direction}) {
                 ...prev,
                 image: {
                     ...prev.image,
-                    // value: imageUrl,
-                    value: URL.createObjectURL(file),
+                    value: imageUrl,
+                    // value: URL.createObjectURL(file),
+                    error:''
 
                 }
             }))
@@ -57,7 +77,6 @@ function SelectImage({firstNode , direction}) {
             reader.readAsDataURL(file)
         }
     }
-    console.log(image);
     
     return (
         <div className='relative w-full h-full p-10 justify-between items-center'>
@@ -83,7 +102,8 @@ function SelectImage({firstNode , direction}) {
                             ...prev,
                             image:{
                                 ...prev.image,
-                                value:''
+                                value:'',
+                                error:''
                             }
                         }))
                         setModel(null)

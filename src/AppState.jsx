@@ -367,12 +367,13 @@ export const StateProvider = ({ children }) => {
       // }
     ]
   )
-  const [nodes, setNodes] = useState([])
   const [model, setModel] = useState(null)
   const [edit, setEdit] = useState(false)
   const [graph, setGraph] = useState(false)
   const [showLeftBar, setShowLeftBar] = useState(false)
   const [showRightBar, setShowRightBar] = useState(false)
+  const [node, setNode] = useState(null)
+
   const [image, setImage] = useState(
     {
       image: {
@@ -399,20 +400,6 @@ export const StateProvider = ({ children }) => {
     }
     setImages(newImages)
   }
-
-  // const onChange = (e , type , field) => {
-  //     switch (type) {
-  //         case 'file':
-  //             setImage(prev => ({
-  //                 ...prev,
-  //                 value : URL.createObjectURL(e.target.files[0])
-  //             }))
-  //             break;
-
-  //         default:
-  //             break;
-  //     }
-  // }
 
   const setNodeChild = (nodeId, child) => {
     if (!child?.child) {
@@ -458,15 +445,16 @@ export const StateProvider = ({ children }) => {
     setImages(newImages)
   }
 
-  const save = async () => {
-    const jsonData = JSON.stringify(nodes)
+  const save = async (fileName) => {
+    const jsonData = JSON.stringify(images)
     const blob = new Blob([jsonData] , {type:'application/json'})
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url;
-    a.download = 'ST-Elian.json'
-    a.click()
+    a.download = `${fileName}.json`
+    await a.click()
    URL.revokeObjectURL(url)
+   setModel(null)
   }
 
 
@@ -476,7 +464,6 @@ export const StateProvider = ({ children }) => {
 
     reader.onload =  async  (e) => {
       const jsonData = await JSON.parse(e.target.result)
-      console.log(jsonData);
       // setNodes(jsonData)
       setImages(jsonData)
       
@@ -506,10 +493,6 @@ export const StateProvider = ({ children }) => {
       setShowLeftBar,
       showRightBar,
       setShowRightBar,
-      nodes,
-      setNodes,
-      scale,
-      setScale,
       firstNodeChild,
       setFirstNodeChild,
       secondNodeChild,
@@ -517,7 +500,9 @@ export const StateProvider = ({ children }) => {
       setNodeChild,
       connectNodes,
       save,
-      open
+      open,
+      node,
+      setNode
     }}>
       {children}
     </AppContext.Provider>

@@ -4,24 +4,29 @@ import Model from './UI/Model'
 import { AppContext } from './AppState'
 import Graph from './UI/Graph/Graph'
 import SelectImage from './UI/SelectImage'
+import SaveProject from './UI/SaveProject'
 function Layout() {
-  const { model, setModel, setEdit, edit, showLeftBar, setShowLeftBar, showRightBar, setShowRightBar, graph, setGraph, images, setScale, nodes, save, open } = useContext(AppContext)
+  const { model, setModel, setEdit, edit, showLeftBar, setShowLeftBar, graph, setGraph, images, open, setNode , node } = useContext(AppContext)
 
 
 
   return (
     <div className="realtive w-screen h-screen flex justify-center items-center overflow-hidden ">
-      <div className='absolute  w-[15%] h-full bg-[#C1C1C1] z-10' style={{ left: showLeftBar ? '0' : '-15%' }}>
-        {
-          nodes.length == 0 ?
-            <p>No Nodes To Show... Add Some</p>
-            :
-            nodes.map(node =>
-              <div className='relative w-full flex-row justify-center items-center p-1 border border-b-2 '>
-                <img src={node.image} className='relative w-1/2 aspect-video' />
-              </div>
-            )
-        }
+      <div className='fixed  w-[15%] h-full bg-[#C1C1C1] z-40 ' style={{ left: showLeftBar ? '0' : '-15%' }}>
+        <div className='relative w-full h-full overflow-scroll scrollbar-hide '>
+
+          {
+            images.length == 0 ?
+              <p className='relative text-[#121212] text-center text-lg py-4'>No Nodes To Show</p>
+
+              :
+              images.map(nodeL =>
+                <div onClick={() => setNode(nodeL)} className='relative w-full flex-row justify-center items-center p-1 border border-b-2 cursor-pointer ' style={{background:nodeL?.id==node?.id ? '#707070' : '#C1C1C1'}}>
+                  <img src={nodeL.image} className='relative w-1/2 aspect-video' />
+                </div>
+              )
+          }
+        </div>
         <div onClick={() => setShowLeftBar(prev => !prev)} className='absolute top-1/2 -right-6 w-6 h-20 bg-[#C1C1C1] rounded-tr-lg rounded-br-lg hover:cursor-pointer'>
 
         </div>
@@ -57,8 +62,11 @@ function Layout() {
               </p>
           }
         </div>
-        <div onClick={() => save()} className='relative bg-[#C1C1C1] m-1 w-10 aspect-square flex justify-center items-center rounded-full z-10 cursor-pointer'>
-          save
+        <div onClick={() => setModel(<SaveProject />)
+        } className='relative bg-[#C1C1C1] m-1 w-10 aspect-square flex justify-center items-center rounded-full z-10 cursor-pointer'>
+          <p className='relative text-[11px] font-black text-black z-10 select-none'>
+                Save
+              </p>
         </div>
       </div>
       {/* </div> */}

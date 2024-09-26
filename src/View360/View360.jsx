@@ -10,16 +10,24 @@ import SelectImage from '../UI/SelectImage.jsx'
 
 
 export default function View360() {
-  const { image, setImage, setModel, images, setImages, NODE, deleteNode , edit } = useContext(AppContext)
-
+  const { image, setImage, setModel, images, setImages, NODE, deleteNode, edit, node, setNode } = useContext(AppContext)
+  const [fov, setFov] = useState(60)
   const addNode = (firstNode, direction) => {
     setModel(<SelectImage firstNode={firstNode} direction={direction} />)
   }
 
-  const [node, setNode] = useState(null)
   const [boxes, setBoxes] = useState([])
 
-
+  const handleWheel = (e) => {
+    setFov(prev => {
+      if ((prev + e.deltaY / 100) > 60 || (prev + e.deltaY / 100) < 1) {
+        return prev
+      }
+      else {
+        return prev + e.deltaY / 100
+      }
+    })
+  }
 
   useEffect(() => {
     const boxes = []
@@ -50,8 +58,6 @@ export default function View360() {
             boxes.push(
               <Box delete={true} rotation={node.childrens[i].direction.rotation} key={node.childrens[i].id} position={node.childrens[i].direction.location} onPress={() => {
                 deleteNode(node.childrens[i].child)
-                // console.log(node.childrens[i].child);
-
               }} />
             )
           }
@@ -67,26 +73,24 @@ export default function View360() {
       setNode(images[0])
     }
   }, [images])
-  console.log(images);
-  console.log(node);
 
 
   return (
     <div className='relative w-full h-full flex flex-row'>
 
-     {
-     
-          node &&
-          <Canvas className='relative w-full min-h-full'>
-            <OrbitControls target={[0, 0, 0]} />
-            <PerspectiveCamera makeDefault position={[0.1, 0, 0]} />
-            {
-              boxes
-            }
-            <ambientLight intensity={1} />
-            <Room image={node.image} />
-          </Canvas>}
-      
+      {
+
+        node &&
+        <Canvas onWheel={handleWheel} className='relative w-full min-h-full'>
+          <OrbitControls enablePan={false} enableZoom={false} target={[0, 0, 0]} />
+          <PerspectiveCamera makeDefault position={[0.1, 0, 0]} fov={fov} />
+          {
+            boxes
+          }
+          <ambientLight intensity={1} />
+          <Room image={node.image} />
+        </Canvas>}
+
     </div>
   )
 }
