@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useRef, useState } from 'react'
 import View360 from './View360/View360'
 import Model from './UI/Model'
 import { AppContext } from './AppState'
@@ -6,22 +6,23 @@ import Graph from './UI/Graph/Graph'
 import SelectImage from './UI/SelectImage'
 import SaveProject from './UI/SaveProject'
 function Layout() {
-  const { model, setModel, setEdit, edit, showLeftBar, setShowLeftBar, graph, setGraph, images, open, setNode , node } = useContext(AppContext)
+  const { model, setModel, setEdit, edit, showLeftBar, setShowLeftBar, graph, setGraph, images, open, setNode, node, tools , setTool , tool } = useContext(AppContext)
 
 
 
   return (
     <div className="realtive w-screen h-screen flex justify-center items-center overflow-hidden ">
+
       <div className='fixed  w-[15%] h-full bg-[#C1C1C1] z-40 ' style={{ left: showLeftBar ? '0' : '-15%' }}>
         <div className='relative w-full h-full overflow-scroll scrollbar-hide '>
-
+        
           {
             images.length == 0 ?
               <p className='relative text-[#121212] text-center text-lg py-4'>No Nodes To Show</p>
 
               :
               images.map(nodeL =>
-                <div onClick={() => setNode(nodeL)} className='relative w-full flex-row justify-center items-center p-1 border border-b-2 cursor-pointer ' style={{background:nodeL?.id==node?.id ? '#707070' : '#C1C1C1'}}>
+                <div onClick={() => setNode(nodeL)} className='relative w-full flex-row justify-center items-center p-1 border border-b-2 cursor-pointer ' style={{ background: nodeL?.id == node?.id ? '#707070' : '#C1C1C1' }}>
                   <img src={nodeL.image} className='relative w-1/2 aspect-video' />
                 </div>
               )
@@ -38,7 +39,17 @@ function Layout() {
 
         </div> */}
       <div className='absolute  bottom-6 right-6 flex flex-row justify-center items-center'>
-
+     
+        {
+          graph && edit &&
+          tools.map(toolL =>
+            <div key={toolL.id} onClick={() => setTool(toolL)} className='relative m-1 w-10 aspect-square flex justify-center items-center rounded-full z-10 cursor-pointer' style={{background:toolL.id == tool.id ? '#707070' : '#C1C1C1'}}>
+                <p className='relative text-[11px] font-black text-black z-10 select-none'>
+                  {toolL.type}
+                </p>
+            </div>
+          )
+        }
         <div onClick={() => setEdit(prev => !prev)} className='relative bg-[#C1C1C1] m-1 w-10 aspect-square flex justify-center items-center rounded-full z-10 cursor-pointer'>
           {edit ?
             <p className='relative text-[11px] font-black text-black z-10 select-none'>
@@ -62,11 +73,12 @@ function Layout() {
               </p>
           }
         </div>
+        
         <div onClick={() => setModel(<SaveProject />)
         } className='relative bg-[#C1C1C1] m-1 w-10 aspect-square flex justify-center items-center rounded-full z-10 cursor-pointer'>
           <p className='relative text-[11px] font-black text-black z-10 select-none'>
-                Save
-              </p>
+            Save
+          </p>
         </div>
       </div>
       {/* </div> */}

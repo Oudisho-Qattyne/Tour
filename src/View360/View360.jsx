@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, TransformControls } from '@react-three/drei'
 import { PerspectiveCamera } from '@react-three/drei'
 import Box from '../UI/Box.jsx'
@@ -10,8 +10,7 @@ import SelectImage from '../UI/SelectImage.jsx'
 
 
 export default function View360() {
-  const { image, setImage, setModel, images, setImages, NODE, deleteNode, edit, node, setNode } = useContext(AppContext)
-  const [fov, setFov] = useState(60)
+  const { image, setImage, setModel, images, setImages, NODE, deleteNode, edit, node, setNode , position , setFov , fov } = useContext(AppContext)
   const addNode = (firstNode, direction) => {
     setModel(<SelectImage firstNode={firstNode} direction={direction} />)
   }
@@ -29,11 +28,14 @@ export default function View360() {
     })
   }
 
-  const handleTouch = (e) => {
+  const handleTouch = async (e) => {
+    const ee = JSON.stringify(e)
+    alert(ee  , 'jsjsj')
+    
     const touches = e.touches
     if(touches.length == 2){
+      alert(JSON.stringify(e.touches.length))
       const distance = Math.hypot(touches[0].clientX - touches[1].clientX , touches[0].clientY - touches[1].clientY)
-      console.log(distance);
       setFov(prev => {
         if ((prev + distance / 100) > 60 || (prev + distance / 100) < 1) {
           return prev
@@ -99,9 +101,9 @@ export default function View360() {
       {
 
         node &&
-        <Canvas handleTouch={handleTouch} onWheel={handleWheel} className='relative w-full min-h-full'>
-          <OrbitControls enablePan={false} enableZoom={false}  />
-          <PerspectiveCamera makeDefault position={[0.1, 0, 0]} fov={fov} />
+        <Canvas onTouchMove={handleTouch} onWheel={handleWheel} className='relative w-full min-h-full'>
+          <OrbitControls enablePan={false} enableZoom={false}   />
+          <PerspectiveCamera makeDefault position={position} fov={60} />
           {
             boxes
           }

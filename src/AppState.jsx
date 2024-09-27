@@ -373,7 +373,33 @@ export const StateProvider = ({ children }) => {
   const [showLeftBar, setShowLeftBar] = useState(false)
   const [showRightBar, setShowRightBar] = useState(false)
   const [node, setNode] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [fov, setFov] = useState(60)
 
+  const [tools, setTools] = useState([
+    {
+      id: 1,
+      type: 'rubber'
+    },
+    {
+      id: 2,
+      type: 'cross'
+    },
+    {
+      id: 3,
+      type: 'pen'
+    }
+  ])
+  const [tool, setTool] = useState(tools[1])
+
+  const [position, setPosition] = useState([0.1, 0, 0])
+  const [mouseEvents, setMouseEvents] = useState({
+    clientX: 0,
+    clientY: 0,
+    clicking: false,
+    offsetWidth: 0,
+    offsetHeight: 0
+  });
   const [image, setImage] = useState(
     {
       image: {
@@ -401,7 +427,7 @@ export const StateProvider = ({ children }) => {
     setImages(newImages)
   }
 
-  const setNodeChild = (nodeId, child) => {
+  const setNodeChild = (nodeId, child, position) => {
     if (!child?.child) {
       if (firstNodeChild?.nodeId == nodeId && firstNodeChild?.child.id == child.id) {
         setFirstNodeChild(null)
@@ -413,7 +439,8 @@ export const StateProvider = ({ children }) => {
         setFirstNodeChild(
           {
             nodeId: nodeId,
-            child: child
+            child: child,
+            position: position
           }
         )
       }
@@ -432,10 +459,10 @@ export const StateProvider = ({ children }) => {
   const connectNodes = () => {
     let newImages = [...images]
 
-    let newFirstNode = newImages.find(image => image.id==firstNodeChild.nodeId)
+    let newFirstNode = newImages.find(image => image.id == firstNodeChild.nodeId)
     let newFirstNodeChild = newFirstNode.childrens.find(child => child.id == firstNodeChild.child.id)
 
-    let newSecondNode = newImages.find(image => image.id==secondNodeChild.nodeId)
+    let newSecondNode = newImages.find(image => image.id == secondNodeChild.nodeId)
     let newSecondNodeChild = newSecondNode.childrens.find(child => child.id == secondNodeChild.child.id)
 
     newFirstNodeChild.child = secondNodeChild.nodeId
@@ -444,17 +471,42 @@ export const StateProvider = ({ children }) => {
     setSecondNodeChild(null)
     setImages(newImages)
   }
+  const disconnectNodes = (firstNode, secondNode) => {
+    if (firstNode && secondNode) {
+      let newImages = [...images]
+      let newFirstNodeChild = null
+      let newSecondNodeChild = null
+      let newFirstNode = newImages.find(image => image.id == firstNode.id)
+      if (newFirstNode) {
+        newFirstNodeChild = newFirstNode.childrens.find(child => child.child == secondNode.id)
+      }
+      let newSecondNode = newImages.find(image => image.id == secondNode.id)
+      if (newSecondNode) {
+        newSecondNodeChild = newSecondNode.childrens.find(child => child.child == firstNode.id)
+      }
+      if (newFirstNodeChild) {
+        newFirstNodeChild.child = null
+      }
+      if (newSecondNodeChild) {
+        newSecondNodeChild.child = null
+      }
+      setImages(newImages)
+    }
+  }
+
+
+
 
   const save = async (fileName) => {
     const jsonData = JSON.stringify(images)
-    const blob = new Blob([jsonData] , {type:'application/json'})
+    const blob = new Blob([jsonData], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url;
     a.download = `${fileName}.json`
     await a.click()
-   URL.revokeObjectURL(url)
-   setModel(null)
+    URL.revokeObjectURL(url)
+    setModel(null)
   }
 
 
@@ -462,13 +514,13 @@ export const StateProvider = ({ children }) => {
     const file = e.target.files[0]
     const reader = new FileReader()
 
-    reader.onload =  async  (e) => {
+    reader.onload = async (e) => {
       const jsonData = await JSON.parse(e.target.result)
       // setNodes(jsonData)
       setImages(jsonData)
-      
+
     }
-    if(file){
+    if (file) {
       await reader.readAsText(file)
     }
   }
@@ -499,10 +551,22 @@ export const StateProvider = ({ children }) => {
       setSecondNodeChild,
       setNodeChild,
       connectNodes,
+      disconnectNodes,
       save,
       open,
       node,
-      setNode
+      setNode,
+      position,
+      setPosition,
+      loading,
+      setLoading,
+      fov,
+      setFov,
+      tools,
+      tool,
+      setTool,
+      mouseEvents,
+      setMouseEvents
     }}>
       {children}
     </AppContext.Provider>
