@@ -6,11 +6,12 @@ import Box from '../UI/Box.jsx'
 import Room from '../UI/Room.jsx'
 import { AppContext } from '../AppState.jsx'
 import SelectImage from '../UI/SelectImage.jsx'
+import Object3D from '../UI/Object3D/Object3D.jsx';
 
 
 
 export default function View360() {
-  const { image, setImage, setModel, images, setImages, NODE, deleteNode, edit, node, setNode , position , setFov , fov } = useContext(AppContext)
+  const { image, setImage, setModel, images, setImages, NODE, deleteNode, edit, node, setNode , position , setFov , fov , rotate } = useContext(AppContext)
   const addNode = (firstNode, direction) => {
     setModel(<SelectImage firstNode={firstNode} direction={direction} />)
   }
@@ -101,13 +102,17 @@ export default function View360() {
       {
 
         node &&
-        <Canvas onTouchMove={handleTouch} onWheel={handleWheel} className='relative w-full min-h-full'>
-          <OrbitControls enablePan={false} enableZoom={false}   />
+        <Canvas onTouchMove={handleTouch}  className='relative w-full min-h-full'>
+          <OrbitControls enablePan={false}  enableRotate={rotate} />
           <PerspectiveCamera makeDefault position={position} fov={60} />
           {
             boxes
           }
+          {
+            node?.objects?.map(object => <Object3D {...object} nodeId={node?.id}/>)
+          }
           <ambientLight intensity={1} />
+          {/* <pointLight position={[0, 0, 0]} intensity={1}/> */}
           <Room image={node.image} />
         </Canvas>}
 

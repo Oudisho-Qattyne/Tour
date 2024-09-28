@@ -9,6 +9,9 @@ export const StateProvider = ({ children }) => {
     id: 1,
     image: null,
     position: [0, 0, 0],
+    objects: [
+
+    ],
     childrens: [
       {
         id: 1,
@@ -142,15 +145,120 @@ export const StateProvider = ({ children }) => {
       // },
     ]
   }
-  const findMaxId = (list) => {
-    let maxId = 1
-    for (let i = 0; i < list.length; i++) {
-      if (list[i].id > maxId) {
-        maxId = list[i].id
+const objects = {
+  cube:{
+    id: 1,
+    type: 'cube',
+    fields: {
+      position: {
+        id: 1,
+        type: 'array',
+        value: [-0.1, 0, 0]
+      },
+      args: {
+        id: 1,
+        type: 'array',
+        value: [0.1, 0.1, 0.1]
+      },
+      rotationX: {
+        id: 1,
+        type: 'number',
+        value: 0
+      },
+      rotationY: {
+        id: 1,
+        type: 'number',
+        value: 0
+      },
+      rotationZ: {
+        id: 1,
+        type: 'number',
+        value: 0
+      },
+      color: {
+        id: 1,
+        type: 'color',
+        value: '#FF0000'
       }
     }
-    return maxId
-  }
+  },
+  pointLight : {
+    id: 2,
+    type: 'pointLight',
+    fields: {
+      position: {
+        id: 1,
+        type: 'array',
+        value: [-0.1, 0, 0]
+      },
+      args: {
+        id: 1,
+        type: 'array',
+        value: [0.1, 0.1, 0.1]
+      },
+      rotationX: {
+        id: 1,
+        type: 'number',
+        value: 0
+      },
+      rotationY: {
+        id: 1,
+        type: 'number',
+        value: 0
+      },
+      rotationZ: {
+        id: 1,
+        type: 'number',
+        value: 0
+      },
+      color: {
+        id: 1,
+        type: 'color',
+        value: '#FF0000'
+      },
+      intensity: {
+        type: 'number',
+        value: 1
+      }
+    }
+  },
+  sphere : {
+    id: 3,
+    type: 'sphere',
+    fields: {
+      position: {
+        id: 1,
+        type: 'array',
+        value: [-0.1, 0, 0]
+      },
+      args: {
+        id: 1,
+        type: 'array',
+        value: [0.1, 16, 100]
+      },
+      rotationX: {
+        id: 1,
+        type: 'number',
+        value: 0
+      },
+      rotationY: {
+        id: 1,
+        type: 'number',
+        value: 0
+      },
+      rotationZ: {
+        id: 1,
+        type: 'number',
+        value: 0
+      },
+      color: {
+        id: 1,
+        type: 'color',
+        value: '#FF0000'
+      }
+    }
+  },
+}
   const [images, setImages] = useState(
 
     [
@@ -374,8 +482,9 @@ export const StateProvider = ({ children }) => {
   const [showRightBar, setShowRightBar] = useState(false)
   const [node, setNode] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [selectedObjects, setSelectedObjects] = useState([])
   const [fov, setFov] = useState(60)
-
+  const [rotate, setRotate] = useState(true)
   const [tools, setTools] = useState([
     {
       id: 1,
@@ -391,14 +500,16 @@ export const StateProvider = ({ children }) => {
     }
   ])
   const [tool, setTool] = useState(tools[1])
-
   const [position, setPosition] = useState([0.1, 0, 0])
   const [mouseEvents, setMouseEvents] = useState({
     clientX: 0,
     clientY: 0,
     clicking: false,
     offsetWidth: 0,
-    offsetHeight: 0
+    offsetHeight: 0,
+    startPositionX: 0,
+    startPositionY: 0,
+
   });
   const [image, setImage] = useState(
     {
@@ -426,6 +537,8 @@ export const StateProvider = ({ children }) => {
     }
     setImages(newImages)
   }
+
+
 
   const setNodeChild = (nodeId, child, position) => {
     if (!child?.child) {
@@ -456,6 +569,7 @@ export const StateProvider = ({ children }) => {
   }
 
 
+
   const connectNodes = () => {
     let newImages = [...images]
 
@@ -471,6 +585,9 @@ export const StateProvider = ({ children }) => {
     setSecondNodeChild(null)
     setImages(newImages)
   }
+
+
+
   const disconnectNodes = (firstNode, secondNode) => {
     if (firstNode && secondNode) {
       let newImages = [...images]
@@ -496,7 +613,6 @@ export const StateProvider = ({ children }) => {
 
 
 
-
   const save = async (fileName) => {
     const jsonData = JSON.stringify(images)
     const blob = new Blob([jsonData], { type: 'application/json' })
@@ -508,6 +624,7 @@ export const StateProvider = ({ children }) => {
     URL.revokeObjectURL(url)
     setModel(null)
   }
+
 
 
   const open = async (e) => {
@@ -524,7 +641,82 @@ export const StateProvider = ({ children }) => {
       await reader.readAsText(file)
     }
   }
-  const [scale, setScale] = useState(0.5)
+
+
+
+  const onChange = (nodeId, objectId, field, value) => {
+    let newImages = [...images]
+    let newNode = newImages.find(node => node.id == nodeId)
+    if (newNode) {
+      let newObject = newNode.objects.find(object => object.id == objectId)
+      if (newObject) {
+        newObject.fields[field].value = value
+        setImages(newImages)
+      }
+    }
+  }
+
+
+
+  const toggleObjectFromSelection = (id) => {
+    if (selectedObjects.find(objectId => objectId == id)) {
+      const newSelectedObjects = selectedObjects.filter(objectId => objectId != id)
+      setSelectedObjects(newSelectedObjects)
+    }
+    else {
+      setSelectedObjects(prev => [...prev, id])
+    }
+  }
+
+
+
+  const deleteObject = (nodeId, objectId) => {
+    let newImages = [...images]
+    let newNode = newImages.find(node => node.id == nodeId)
+    if (newNode) {
+      let newObjects = newNode.objects.filter(object => object.id != objectId)
+      newNode.objects = newObjects
+      setImages(newImages)
+    }
+  }
+
+
+
+  const findMaxId = (list) => {
+    let maxId = 1
+    for (let i = 0; i < list.length; i++) {
+      if (list[i].id > maxId) {
+        maxId = list[i].id
+      }
+    }
+    return maxId
+  }
+
+
+
+  const findMax = (list) => {
+    let maxId = 0
+    for (let i = 0; i < list.length; i++) {
+      if (list[i] > maxId) {
+        maxId = list[i]
+      }
+    }
+    return maxId
+  }
+
+const addObject = ( nodeId , object) => {
+  let newImages = [...images]
+  let newNode = newImages.find(node => node.id == nodeId)
+  if(newNode){
+    let newObject = {...object}
+    newObject.id = findMaxId(newNode.objects) + 1
+    newNode.objects = [...newNode.objects , newObject]
+    setImages(newImages)
+  }
+}
+
+
+
 
   return (
     <AppContext.Provider value={{
@@ -536,6 +728,7 @@ export const StateProvider = ({ children }) => {
       image,
       setImage,
       findMaxId,
+      findMax,
       deleteNode,
       edit,
       setEdit,
@@ -566,7 +759,17 @@ export const StateProvider = ({ children }) => {
       tool,
       setTool,
       mouseEvents,
-      setMouseEvents
+      setMouseEvents,
+      selectedObjects,
+      setSelectedObjects,
+      rotate,
+      setRotate,
+      toggleObjectFromSelection,
+      onChange,
+      objects,
+      addObject,
+      deleteObject,
+
     }}>
       {children}
     </AppContext.Provider>

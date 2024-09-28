@@ -5,6 +5,7 @@ import { AppContext } from './AppState'
 import Graph from './UI/Graph/Graph'
 import SelectImage from './UI/SelectImage'
 import SaveProject from './UI/SaveProject'
+import NodeData from './UI/NodeData/NodeData'
 function Layout() {
   const { model, setModel, setEdit, edit, showLeftBar, setShowLeftBar, graph, setGraph, images, open, setNode, node, tools , setTool , tool } = useContext(AppContext)
 
@@ -22,9 +23,7 @@ function Layout() {
 
               :
               images.map(nodeL =>
-                <div onClick={() => setNode(nodeL)} className='relative w-full flex-row justify-center items-center p-1 border border-b-2 cursor-pointer ' style={{ background: nodeL?.id == node?.id ? '#707070' : '#C1C1C1' }}>
-                  <img src={nodeL.image} className='relative w-1/2 aspect-video' />
-                </div>
+                <NodeData nodeL={nodeL}/>
               )
           }
         </div>

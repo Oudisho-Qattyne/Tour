@@ -29,7 +29,7 @@ function Room({ image, position, args }) {
   }, [image])
 
   return (
-    <mesh position={position ? position : [0, 0, 0]} receiveShadow>
+    <mesh position={position ? position : [0, 0, 0]} receiveShadow castShadow>
       <sphereGeometry args={args ? args : [1, 100]} />
       {
         map &&
