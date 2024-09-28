@@ -102,8 +102,8 @@ export default function View360() {
       {
 
         node &&
-        <Canvas onTouchMove={handleTouch}  className='relative w-full min-h-full'>
-          <OrbitControls enablePan={false}  enableRotate={rotate} />
+        <Canvas onTouchMove={handleTouch} onWheel={handleWheel} className='relative w-full min-h-full'>
+          <OrbitControls enablePan={false}  enableRotate={rotate} enableZoom={false} />
           <PerspectiveCamera makeDefault position={position} fov={60} />
           {
             boxes
