@@ -5,10 +5,11 @@ import { useFrame } from '@react-three/fiber';
 import { Euler } from 'three';
 import Cube from './ObjectTypes/Cube';
 import Sphere from './ObjectTypes/Sphere';
+import TextObject from './ObjectTypes/TextObject';
 
 function Object3D(props) {
 
-    const { images, setImages, selectedObjects, mouseEvents, setRotate , setSelectedObjects , edit , findMax} = useContext(AppContext)
+    const { images, setImages, selectedObjects, mouseEvents, setRotate, setSelectedObjects, edit, findMax } = useContext(AppContext)
     const [object, setObject] = useState(null)
     const [direction, setDirection] = useState(null)
     const objectRef = useRef(null)
@@ -28,16 +29,21 @@ function Object3D(props) {
                 break;
             case 'cube':
                 setObject(
-                    <Cube {...props}/>
+                    <Cube {...props} />
                 )
                 break;
             case 'sphere':
                 setObject(
-                    <Sphere {...props}/>
+                    <Sphere {...props} />
+                )
+                break;
+            case 'text':
+                setObject(
+                    <TextObject {...props} />
                 )
                 break;
             default:
-                break; 
+                break;
         }
         // if(objectRef){
         //     objectRef.current.rotation.x = props.rotationX
@@ -111,7 +117,7 @@ function Object3D(props) {
                 newObject.fields.rotationX.value = objectRef.current.rotation.x
                 newObject.fields.rotationY.value = objectRef.current.rotation.y
                 newObject.fields.rotationZ.value = objectRef.current.rotation.z
-                
+
                 setImages(newImages)
             }
         }
@@ -121,24 +127,31 @@ function Object3D(props) {
     //     if(r.current)
     //     r.current.rotation.y += 0.01;
     // })
-    if(props.type == 'cube'){
-        console.log(findMax(props.fields.args.value) , props.fields.args.value);
+    if (props.type == 'cube') {
+        console.log(findMax(props.fields.args.value), props.fields.args.value);
     }
-
+        // const playSound = () => {
+        //   const audio = new Audio('sound.m4a');
+        //   audio.play();
+        // };
     return (
+
         <>
             <mesh onPointerDown={() => {
-                if(edit){
-                    setSelectedObjects(prev => [...prev , props.id])
+                if (edit) {
+                    setSelectedObjects(prev => [...prev, props.id])
                     // toggleObjectFromSelection(props.id)
+                }
+                else{
                 }
             }} castShadow receiveShadow ref={objectRef} rotation-x={props.fields.rotationX.value} rotation-y={props.fields.rotationY.value} rotation-z={props.fields.rotationZ.value} position={props.fields.position.value} >
                 {
+                    props.fields.visible.value &&
                     object
                 }
             </mesh>
             {
-                selectedObjects.find(objectId => objectId == props.id) && edit &&
+                selectedObjects.find(objectId => objectId == props.id) && edit && props.fields.visible.value &&
                 <>
                     <mesh castShadow receiveShadow position={props.fields.position.value} ref={zaRef} onPointerDown={() => {
                         setDirection('z')

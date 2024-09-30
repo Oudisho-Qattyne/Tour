@@ -1,6 +1,8 @@
 import React, { createContext, useState } from 'react'
 import { BACK, BACK_LEFT, BACK_RIGTH, BOTTOM, BOTTOM_BACK, BOTTOM_BACK_LEFT, BOTTOM_BACK_RIGTH, BOTTOM_FRONT, BOTTOM_FRONT_LEFT, BOTTOM_FRONT_RIGTH, BOTTOM_LEFT, BOTTOM_RIGHT, FRONT, FRONT_LEFT, FRONT_RIGHT, LEFT, RIGHT, TOP, TOP_BACK, TOP_BACK_LEFT, TOP_BACK_RIGHT, TOP_FRONT, TOP_FRONT_LEFT, TOP_FRONT_RIGTH, TOP_LEFT, TOP_RIGHT } from './Constants/CONSTANTS.js'
-import fs from 'fs'
+import rubberIcon from './assets/icons/rubberIcon.png'
+import pencilIcon from './assets/icons/pencilIcon.png'
+import selectorIcon from './assets/icons/selectorIcon.png'
 export const AppContext = createContext()
 
 export const StateProvider = ({ children }) => {
@@ -150,6 +152,16 @@ const objects = {
     id: 1,
     type: 'cube',
     fields: {
+      functionality:{
+        id:1,
+        type:'select_function',
+        value:[]
+      },
+      visible:{
+        id:1,
+        type:'checkbox',
+        value:true
+      },
       position: {
         id: 1,
         type: 'array',
@@ -186,6 +198,16 @@ const objects = {
     id: 2,
     type: 'pointLight',
     fields: {
+      functionality:{
+        id:1,
+        type:'select_function',
+        value:[]
+      },
+      visible:{
+        id:1,
+        type:'checkbox',
+        value:true
+      },
       position: {
         id: 1,
         type: 'array',
@@ -226,6 +248,16 @@ const objects = {
     id: 3,
     type: 'sphere',
     fields: {
+      functionality:{
+        id:1,
+        type:'select_function',
+        value:[]
+      },
+      visible:{
+        id:1,
+        type:'checkbox',
+        value:true
+      },
       position: {
         id: 1,
         type: 'array',
@@ -258,7 +290,88 @@ const objects = {
       }
     }
   },
+  text:{
+    id: 1,
+    type: 'text',
+    fields: {
+      functionality:{
+        id:1,
+        type:'select_function',
+        value:[]
+      },
+      visible:{
+        id:1,
+        type:'checkbox',
+        value:true
+      },
+      position: {
+        id: 1,
+        type: 'array',
+        value: [-0.1, 0, 0]
+      },
+      args: {
+        id: 1,
+        type: 'array',
+        value: [0.1, 0.1, 0.1]
+      },
+      rotationX: {
+        id: 1,
+        type: 'number',
+        value: 0
+      },
+      rotationY: {
+        id: 1,
+        type: 'number',
+        value: 0
+      },
+      rotationZ: {
+        id: 1,
+        type: 'number',
+        value: 0
+      },
+      color: {
+        id: 1,
+        type: 'color',
+        value: '#FF0000'
+      },
+      backgroundColor:{
+        id:1,
+        type : 'color',
+        value : '#C1C1C1'
+      },
+      text:{
+        id:1,
+        type:'text',
+        value:'test'
+      },
+      fontSize:{
+        id:1,
+        type:'number',
+        value:10
+      }
+    }
+  },
 }
+const functions = [
+  {
+    id:1,
+    title:'Show Object',
+    name:'show-object',
+    objectId:null
+  },
+  {
+    id:2,
+    title:'Play Sound',
+    name:'play-sound',
+    sound:null
+  },
+  {
+    id:3,
+    title:'Move To Node',
+    name:'move-to-node',
+    nodeId:null
+  }
+]
   const [images, setImages] = useState(
 
     [
@@ -488,15 +601,18 @@ const objects = {
   const [tools, setTools] = useState([
     {
       id: 1,
-      type: 'rubber'
+      type: 'rubber',
+      icon:rubberIcon
     },
     {
       id: 2,
-      type: 'cross'
+      type: 'cross',
+      icon:selectorIcon
     },
     {
       id: 3,
-      type: 'pen'
+      type: 'pen',
+      icon:pencilIcon
     }
   ])
   const [tool, setTool] = useState(tools[1])
@@ -769,6 +885,7 @@ const addObject = ( nodeId , object) => {
       objects,
       addObject,
       deleteObject,
+      functions
 
     }}>
       {children}

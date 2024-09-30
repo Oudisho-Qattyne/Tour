@@ -41,7 +41,7 @@ function SaveProject() {
             <button onClick={() => {
                 setModel(null)
             }} className='relative w-full flex justify-center items-center rounded-full bg-white border border-1 border-[#C1C1C1]'>
-                <p className='relative text-[#C1C1C1] py-3'>Cancel</p>
+                <p className='relative text-[#aaaaaa] py-3'>Cancel</p>
             </button>
         </div>
         <div className='relative w-1/2 p-5'>
@@ -58,7 +58,7 @@ function SaveProject() {
                         }
                     }))
                 }
-                }}className='relative w-full flex justify-center items-center rounded-full bg-black '>
+                }}className='relative w-full flex justify-center items-center rounded-full bg-black border border-white '>
                 <p className='relative text-[#FFFFFF] py-3'>Okay</p>
             </button>
         </div>

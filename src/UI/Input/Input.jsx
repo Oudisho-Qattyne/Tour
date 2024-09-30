@@ -34,7 +34,7 @@ function Input(props) {
 
     return (
         <div className='relative w-full p-1 py-5'>
-            <p className='relative w-full text-black '>
+            <p className='relative w-full text-white '>
                 {props.placeholder} :
             </p>
             <div className='relative  px-5'>

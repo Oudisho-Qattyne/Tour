@@ -1,7 +1,8 @@
 import React, { useContext, useState } from 'react'
 import { AppContext } from '../../AppState'
 import Field from './Fields.jsx/Field'
-
+import dropDownIcon from './../../assets/icons/dropdownIcon.png'
+import deleteIcon from './../../assets/icons/deleteIcon.png'
 function ObjectData({ objectData, nodeId }) {
 
     const { setSelectedObjects, selectedObjects, node, toggleObjectFromSelection, deleteObject } = useContext(AppContext)
@@ -16,18 +17,18 @@ function ObjectData({ objectData, nodeId }) {
                 <div onClick={() => toggleObjectFromSelection(objectData.id)} className='relative w-[60%] h-[25px] flex-row justify-start items-center  ' >
                     <p>{objectData.type}</p>
                 </div>
-                <div onClick={() => deleteObject(nodeId, objectData.id)} className='relative w-[20%] h-[25px] bg-red-300 flex justify-center items-center'>
-                    <p className='relative text-[9px] font-black'>DELETE</p>
+                <div onClick={() => deleteObject(nodeId, objectData.id)} className='relative w-[20%] h-[25px]  flex justify-center items-center p-2'>
+                    <img src={deleteIcon} className={`relative w-full aspect-square transition-all duration-500 `} />
                 </div>
-                <div onClick={() => setShowObjectsProps(prev => !prev)} className='relative w-[20%] h-[25px] bg-red-400 flex justify-center items-center'>
-
+                <div onClick={() => setShowObjectsProps(prev => !prev)} className='relative w-[20%] h-[25px]  flex justify-center items-center p-2' >
+                    <img src={dropDownIcon} className={`relative w-full aspect-square ${showObjectsProps ? 'rotate-180' : ''} transition-all duration-500 `} />
                 </div>
             </div>
             {
                 showObjectsProps &&
                 Object.keys(objectData.fields).map(prop => {
                     return (
-                        <div className='relative w-full flex flex-row justify-between items-center p-1'>
+                        <div className='relative w-full flex flex-row justify-between items-center p-1 even:bg-[#eeeeee] odd:bg-[#e1e1e1]'>
                             <p className='relative w-1/3 text-[10px] '>{prop} : </p>
                             {/* <input className='relative w-1/2' type={objectData.fields[prop].type} value={objectData.fields[prop].value} onChange={(e) => console.log(e.target.value)} /> */}
                             <Field {...objectData.fields[prop]} nodeId={nodeId} objectId={objectData.id} field={prop} />

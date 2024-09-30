@@ -6,29 +6,37 @@ import Graph from './UI/Graph/Graph'
 import SelectImage from './UI/SelectImage'
 import SaveProject from './UI/SaveProject'
 import NodeData from './UI/NodeData/NodeData'
+import arrowIcon from './assets/icons/arrowIcon.png'
+import nodesIcon from './assets/icons/nodesIcon.png'
+import icon360 from './assets/icons/360Icon.png'
+import editIcon from './assets/icons/editIcon.png'
+import eyeIcon from './assets/icons/eyeIcon.png'
+import saveIcon from './assets/icons/saveIcon.png'
 function Layout() {
-  const { model, setModel, setEdit, edit, showLeftBar, setShowLeftBar, graph, setGraph, images, open, setNode, node, tools , setTool , tool } = useContext(AppContext)
+  const { model, setModel, setEdit, edit, showLeftBar, setShowLeftBar, graph, setGraph, images, open, setNode, node, tools, setTool, tool } = useContext(AppContext)
 
 
 
   return (
     <div className="realtive w-screen h-screen flex justify-center items-center overflow-hidden ">
 
-      <div className='fixed  w-[15%] h-full bg-[#C1C1C1] z-40 ' style={{ left: showLeftBar ? '0' : '-15%' }}>
+      <div className='fixed  w-[15%] h-full bg-[#121212] z-40 ransition-transform duration-1000' style={{ left: showLeftBar ? '0' : '-15%' }}>
         <div className='relative w-full h-full overflow-scroll scrollbar-hide '>
-        
+
           {
             images.length == 0 ?
               <p className='relative text-[#121212] text-center text-lg py-4'>No Nodes To Show</p>
 
               :
               images.map(nodeL =>
-                <NodeData nodeL={nodeL}/>
+                <NodeData nodeL={nodeL} />
               )
           }
         </div>
-        <div onClick={() => setShowLeftBar(prev => !prev)} className='absolute top-1/2 -right-6 w-6 h-20 bg-[#C1C1C1] rounded-tr-lg rounded-br-lg hover:cursor-pointer'>
-
+        <div onClick={() => setShowLeftBar(prev => !prev)} className='absolute top-1/2 -right-10 w-10 h-20 bg-[#121212] rounded-tr-full rounded-br-full flex justify-center items-center hover:cursor-pointer'>
+        <div className='relative select-none p-1 -left-1'>
+            <img src={arrowIcon} className={`relative w-full aspect-square ${showLeftBar ? 'rotate-180' : ''} transition-transform duration-1000`}/>
+          </div>
         </div>
       </div>
 
@@ -38,46 +46,46 @@ function Layout() {
 
         </div> */}
       <div className='absolute  bottom-6 right-6 flex flex-row justify-center items-center'>
-     
+
         {
           graph && edit &&
           tools.map(toolL =>
-            <div key={toolL.id} onClick={() => setTool(toolL)} className='relative m-1 w-10 aspect-square flex justify-center items-center rounded-full z-10 cursor-pointer' style={{background:toolL.id == tool.id ? '#707070' : '#C1C1C1'}}>
-                <p className='relative text-[11px] font-black text-black z-10 select-none'>
-                  {toolL.type}
-                </p>
+            <div key={toolL.id} onClick={() => setTool(toolL)} className='relative m-1 w-10 aspect-square flex justify-center items-center rounded-full z-10 cursor-pointer' style={{ background: toolL.id == tool.id ? '#707070' : '#121212' }}>
+               <div className='relative select-none p-2'>
+                <img src={toolL.icon} className='relative w-full aspect-square'/>
+              </div>
             </div>
           )
         }
-        <div onClick={() => setEdit(prev => !prev)} className='relative bg-[#C1C1C1] m-1 w-10 aspect-square flex justify-center items-center rounded-full z-10 cursor-pointer'>
+        <div onClick={() => setEdit(prev => !prev)} className='relative bg-[#121212] m-1 w-10 aspect-square flex justify-center items-center rounded-full z-10 cursor-pointer'>
           {edit ?
-            <p className='relative text-[11px] font-black text-black z-10 select-none'>
-              Show
-            </p>
+            <div className='relative select-none p-1'>
+            <img src={eyeIcon} className='relative w-full aspect-square'/>
+          </div>
             :
-            <p className='relative text-[11px] font-black text-black z-10 select-none'>
-              Edit
-            </p>
+            <div className='relative select-none p-2'>
+                <img src={editIcon} className='relative w-full aspect-square'/>
+              </div>
           }
         </div>
-        <div onClick={() => setGraph(prev => !prev)} className='relative bg-[#C1C1C1] m-1 w-10 aspect-square flex justify-center items-center rounded-full z-10 cursor-pointer'>
+        <div onClick={() => setGraph(prev => !prev)} className='relative bg-[#121212] m-1 w-10 aspect-square flex justify-center items-center rounded-full z-10 cursor-pointer'>
           {
             graph ?
-              <p className='relative text-[11px] font-black text-black z-10 select-none'>
-                360
-              </p>
+              <div className='relative select-none p-1'>
+                <img src={icon360} className='relative w-full aspect-square'/>
+              </div>
               :
-              <p className='relative text-[11px] font-black text-black z-10 select-none'>
-                Graph
-              </p>
+              <div className='relative select-none p-1'>
+              <img src={nodesIcon} className='relative w-full aspect-square'/>
+            </div>
           }
         </div>
-        
+
         <div onClick={() => setModel(<SaveProject />)
-        } className='relative bg-[#C1C1C1] m-1 w-10 aspect-square flex justify-center items-center rounded-full z-10 cursor-pointer'>
-          <p className='relative text-[11px] font-black text-black z-10 select-none'>
-            Save
-          </p>
+        } className='relative bg-[#121212] m-1 w-10 aspect-square flex justify-center items-center rounded-full z-10 cursor-pointer'>
+           <div className='relative select-none p-2'>
+              <img src={saveIcon} className='relative w-full aspect-square'/>
+            </div>
         </div>
       </div>
       {/* </div> */}

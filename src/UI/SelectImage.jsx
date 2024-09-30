@@ -112,7 +112,7 @@ function SelectImage({firstNode , direction}) {
                     </button>
                 </div>
                 <div className='relative w-1/2 p-5'>
-                    <button onClick={() => addNode()}className='relative w-full flex justify-center items-center rounded-full bg-black '>
+                    <button onClick={() => addNode()}className='relative w-full flex justify-center items-center rounded-full bg-black border border-white  '>
                         <p className='relative text-[#FFFFFF] py-3'>Okay</p>
                     </button>
                 </div>
