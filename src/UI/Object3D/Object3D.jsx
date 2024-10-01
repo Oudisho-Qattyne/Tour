@@ -9,7 +9,7 @@ import TextObject from './ObjectTypes/TextObject';
 
 function Object3D(props) {
 
-    const { images, setImages, selectedObjects, mouseEvents, setRotate, setSelectedObjects, edit, findMax } = useContext(AppContext)
+    const { images, setImages, selectedObjects, mouseEvents, setRotate, setSelectedObjects, edit, findMax , setSound , setNode} = useContext(AppContext)
     const [object, setObject] = useState(null)
     const [direction, setDirection] = useState(null)
     const objectRef = useRef(null)
@@ -122,18 +122,48 @@ function Object3D(props) {
             }
         }
     }
-    const r = useRef()
     // useFrame(() => {
     //     if(r.current)
     //     r.current.rotation.y += 0.01;
     // })
-    if (props.type == 'cube') {
-        console.log(findMax(props.fields.args.value), props.fields.args.value);
-    }
+
         // const playSound = () => {
         //   const audio = new Audio('sound.m4a');
         //   audio.play();
         // };
+    const onPress = () => {
+        console.log(props.fields.functionality.value);
+        props.fields.functionality.value.map(func => {
+            switch (func.name) {
+                case 'play-sound':
+                    setSound(func.sound)
+                    break;
+                case 'show-object':
+                    let newNodes = [...images]
+                    let newNode = newNodes.find(node => node.id == props.nodeId )
+                    if(newNode) {
+                        let newObj = newNode.objects.find(obj => obj.id == func.objectId)
+                        if(newObj){
+                            newObj.fields.visible.value = !newObj.fields.visible.value 
+                            setImages(newNodes)
+                        }
+                    }
+                    break;
+                    case 'move-to-node':
+                        const node = images.find(node => node.id == func.nodeId)
+                        if(node){
+                            setNode(node)
+                        }
+                        break;
+                default:
+                    break;
+            }
+        })
+        
+    }
+
+
+    
     return (
 
         <>
@@ -143,6 +173,7 @@ function Object3D(props) {
                     // toggleObjectFromSelection(props.id)
                 }
                 else{
+                    onPress()
                 }
             }} castShadow receiveShadow ref={objectRef} rotation-x={props.fields.rotationX.value} rotation-y={props.fields.rotationY.value} rotation-z={props.fields.rotationZ.value} position={props.fields.position.value} >
                 {

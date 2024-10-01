@@ -13,15 +13,18 @@ function ObjectData({ objectData, nodeId }) {
 
     return (
         <div className='relative w-full flex flex-col justify-start items-start' >
-            <div className='relative w-full flex flex-row justify-center items-center border border-b-2 cursor-pointer p-1' style={{ background: selectedObjects.find(objectId => objectId == objectData.id) && node.id == nodeId ? '#707070' : '#C1C1C1' }}>
+            <div className='relative w-full flex flex-row justify-between items-center border border-b-2 cursor-pointer p-1' style={{ background: selectedObjects.find(objectId => objectId == objectData.id) && node.id == nodeId ? '#707070' : '#C1C1C1' }}>
                 <div onClick={() => toggleObjectFromSelection(objectData.id)} className='relative w-[60%] h-[25px] flex-row justify-start items-center  ' >
                     <p>{objectData.type}</p>
                 </div>
-                <div onClick={() => deleteObject(nodeId, objectData.id)} className='relative w-[20%] h-[25px]  flex justify-center items-center p-2'>
-                    <img src={deleteIcon} className={`relative w-full aspect-square transition-all duration-500 `} />
-                </div>
-                <div onClick={() => setShowObjectsProps(prev => !prev)} className='relative w-[20%] h-[25px]  flex justify-center items-center p-2' >
-                    <img src={dropDownIcon} className={`relative w-full aspect-square ${showObjectsProps ? 'rotate-180' : ''} transition-all duration-500 `} />
+                <div className='relative w-[20%] flex flex-row justify-center items-center p-2'>
+
+                    <div onClick={() => deleteObject(nodeId, objectData.id)} className='relative w-1/2  flex justify-center items-center '>
+                        <img src={deleteIcon} className={`relative w-full aspect-square transition-all duration-500 `} />
+                    </div>
+                    <div onClick={() => setShowObjectsProps(prev => !prev)} className='relative w-1/2   flex justify-center items-center ' >
+                        <img src={dropDownIcon} className={`relative w-full aspect-square ${showObjectsProps ? 'rotate-180' : ''} transition-all duration-500 `} />
+                    </div>
                 </div>
             </div>
             {

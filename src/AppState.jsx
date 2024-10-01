@@ -642,6 +642,10 @@ const functions = [
   )
   const [firstNodeChild, setFirstNodeChild] = useState(null)
   const [secondNodeChild, setSecondNodeChild] = useState(null)
+const [sound , setSound] = useState(null)
+
+
+
   const deleteNode = (id) => {
     let newImages = images.filter(image => image.id != id)
     for (let i = 0; i < newImages.length; i++) {
@@ -885,7 +889,9 @@ const addObject = ( nodeId , object) => {
       objects,
       addObject,
       deleteObject,
-      functions
+      functions,
+      sound,
+      setSound
 
     }}>
       {children}

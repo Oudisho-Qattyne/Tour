@@ -13,14 +13,14 @@ import editIcon from './assets/icons/editIcon.png'
 import eyeIcon from './assets/icons/eyeIcon.png'
 import saveIcon from './assets/icons/saveIcon.png'
 function Layout() {
-  const { model, setModel, setEdit, edit, showLeftBar, setShowLeftBar, graph, setGraph, images, open, setNode, node, tools, setTool, tool } = useContext(AppContext)
+  const { model, setModel, setEdit, edit, showLeftBar, setShowLeftBar, graph, setGraph, images, open, setNode, node, tools, setTool, tool, sound, setSound } = useContext(AppContext)
 
 
 
   return (
     <div className="realtive w-screen h-screen flex justify-center items-center overflow-hidden ">
 
-      <div className='fixed  w-[15%] h-full bg-[#121212] z-40 ransition-transform duration-1000' style={{ left: showLeftBar ? '0' : '-15%' }}>
+      <div className='fixed  w-1/4 h-full bg-[#121212] z-10 ransition-transform duration-1000' style={{ left: showLeftBar ? '0' : '-25%' }}>
         <div className='relative w-full h-full overflow-scroll scrollbar-hide '>
 
           {
@@ -34,8 +34,8 @@ function Layout() {
           }
         </div>
         <div onClick={() => setShowLeftBar(prev => !prev)} className='absolute top-1/2 -right-10 w-10 h-20 bg-[#121212] rounded-tr-full rounded-br-full flex justify-center items-center hover:cursor-pointer'>
-        <div className='relative select-none p-1 -left-1'>
-            <img src={arrowIcon} className={`relative w-full aspect-square ${showLeftBar ? 'rotate-180' : ''} transition-transform duration-1000`}/>
+          <div className='relative select-none p-1 -left-1'>
+            <img src={arrowIcon} className={`relative w-full aspect-square ${showLeftBar ? 'rotate-180' : ''} transition-transform duration-1000`} />
           </div>
         </div>
       </div>
@@ -51,8 +51,8 @@ function Layout() {
           graph && edit &&
           tools.map(toolL =>
             <div key={toolL.id} onClick={() => setTool(toolL)} className='relative m-1 w-10 aspect-square flex justify-center items-center rounded-full z-10 cursor-pointer' style={{ background: toolL.id == tool.id ? '#707070' : '#121212' }}>
-               <div className='relative select-none p-2'>
-                <img src={toolL.icon} className='relative w-full aspect-square'/>
+              <div className='relative select-none p-2'>
+                <img src={toolL.icon} className='relative w-full aspect-square' />
               </div>
             </div>
           )
@@ -60,32 +60,32 @@ function Layout() {
         <div onClick={() => setEdit(prev => !prev)} className='relative bg-[#121212] m-1 w-10 aspect-square flex justify-center items-center rounded-full z-10 cursor-pointer'>
           {edit ?
             <div className='relative select-none p-1'>
-            <img src={eyeIcon} className='relative w-full aspect-square'/>
-          </div>
+              <img src={eyeIcon} className='relative w-full aspect-square' />
+            </div>
             :
             <div className='relative select-none p-2'>
-                <img src={editIcon} className='relative w-full aspect-square'/>
-              </div>
+              <img src={editIcon} className='relative w-full aspect-square' />
+            </div>
           }
         </div>
         <div onClick={() => setGraph(prev => !prev)} className='relative bg-[#121212] m-1 w-10 aspect-square flex justify-center items-center rounded-full z-10 cursor-pointer'>
           {
             graph ?
               <div className='relative select-none p-1'>
-                <img src={icon360} className='relative w-full aspect-square'/>
+                <img src={icon360} className='relative w-full aspect-square' />
               </div>
               :
               <div className='relative select-none p-1'>
-              <img src={nodesIcon} className='relative w-full aspect-square'/>
-            </div>
+                <img src={nodesIcon} className='relative w-full aspect-square' />
+              </div>
           }
         </div>
 
         <div onClick={() => setModel(<SaveProject />)
         } className='relative bg-[#121212] m-1 w-10 aspect-square flex justify-center items-center rounded-full z-10 cursor-pointer'>
-           <div className='relative select-none p-2'>
-              <img src={saveIcon} className='relative w-full aspect-square'/>
-            </div>
+          <div className='relative select-none p-2'>
+            <img src={saveIcon} className='relative w-full aspect-square' />
+          </div>
         </div>
       </div>
       {/* </div> */}
@@ -110,6 +110,18 @@ function Layout() {
       {
         model &&
         <Model model={model} />
+      }
+      {
+        sound &&
+        <div className='fixed w-1/3 top-10 right-10 flex flex-row justify-center items-center'>
+          <audio autoPlay className='relative w-full' controls>
+            <source src={sound}  />
+            Your browser does not support the audio element.
+          </audio>
+          <p className='relative w-5 font-black aspect-square text-center select-none cursor-pointer' onClick={() => setSound(null)} >
+            x
+          </p>
+        </div>
       }
     </div>
   )
