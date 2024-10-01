@@ -165,7 +165,7 @@ const objects = {
       position: {
         id: 1,
         type: 'array',
-        value: [-0.1, 0, 0]
+        value: [-0.2, 0, 0]
       },
       args: {
         id: 1,
@@ -211,7 +211,7 @@ const objects = {
       position: {
         id: 1,
         type: 'array',
-        value: [-0.1, 0, 0]
+        value: [-0.2, 0, 0]
       },
       args: {
         id: 1,
@@ -261,7 +261,7 @@ const objects = {
       position: {
         id: 1,
         type: 'array',
-        value: [-0.1, 0, 0]
+        value: [-0.2, 0, 0]
       },
       args: {
         id: 1,
@@ -307,12 +307,12 @@ const objects = {
       position: {
         id: 1,
         type: 'array',
-        value: [-0.1, 0, 0]
+        value: [-0.2, 0, 0]
       },
       args: {
         id: 1,
         type: 'array',
-        value: [0.1, 0.1, 0.1]
+        value: [0.1, 0, 0]
       },
       rotationX: {
         id: 1,
@@ -322,7 +322,7 @@ const objects = {
       rotationY: {
         id: 1,
         type: 'number',
-        value: 0
+        value: 1.8
       },
       rotationZ: {
         id: 1,
@@ -347,7 +347,7 @@ const objects = {
       fontSize:{
         id:1,
         type:'number',
-        value:10
+        value:0.1
       }
     }
   },
