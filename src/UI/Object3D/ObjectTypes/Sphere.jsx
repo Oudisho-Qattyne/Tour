@@ -1,6 +1,19 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { NearestFilter, TextureLoader } from 'three'
 
 function Sphere(props) {
+    const [texture , setTexture] = useState(null)
+    useEffect(() => {
+        if(props?.fields?.texture.value){
+            const textureLoader = new TextureLoader()
+                textureLoader.load(props?.fields?.texture.value, texture => {
+                    texture.minFilter = NearestFilter
+                    texture.magFilter = NearestFilter
+                    texture.anisotropy = 1
+                    setTexture(texture)
+                })
+        }
+    } , [props?.fields?.texture.value])
     return (
         <>
             <sphereGeometry  args={props.fields.args.value}  />
@@ -8,7 +21,10 @@ function Sphere(props) {
                 props.fields.color.value &&
                 <meshStandardMaterial color={props.fields.color.value} />
             }
-
+ {
+                texture &&
+                <meshStandardMaterial map={texture} />
+            }
         </>
     )
 }

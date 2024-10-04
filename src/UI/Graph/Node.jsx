@@ -1,21 +1,31 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import Room from '../Room'
 import { AppContext } from '../../AppState'
 import { Image, Line, Text } from '@react-three/drei'
 import { LinearFilter, NearestFilter, TextureLoader } from 'three'
-import { useLoader } from '@react-three/fiber'
+import { useFrame, useLoader } from '@react-three/fiber'
 
 export default function Node({ nodeg }) {
-    const { images, setImages, setNodeChild, firstNodeChild, secondNodeChild, edit, tool, disconnectNodes , mouseEvents } = useContext(AppContext)
+    const { images, setImages, setNodeChild, firstNodeChild, secondNodeChild, edit, tool, disconnectNodes, mouseEvents } = useContext(AppContext)
     const [node, setNode] = useState(null)
     const [map, setMap] = useState(null)
-    // const textureLoader = new TextureLoader()
-    // textureLoader.load(node?.image, texture => {
-    //   texture.minFilter = NearestFilter
-    //   texture.magFilter = NearestFilter
-    //   texture.anisotropy = 1
-    //   setMap(texture)
-    // })
+    const [direction , setDirection] = useState(null)
+    const nodeRef = useRef()
+    const xrRef = useRef(null)
+    const yrRef = useRef(null)
+    const zrRef = useRef(null)
+    const xaRef = useRef(null)
+    const yaRef = useRef(null)
+    const zaRef = useRef(null)
+    // useEffect(() => {
+    //     const textureLoader = new TextureLoader()
+    //     textureLoader.load(node?.image, texture => {
+    //         texture.minFilter = NearestFilter
+    //         texture.magFilter = NearestFilter
+    //         texture.anisotropy = 1
+    //         setMap(texture)
+    //     })
+    // }, [node?.image])
 
     useEffect(() => {
         if (images) {
@@ -29,12 +39,54 @@ export default function Node({ nodeg }) {
             }
         }
     }, [images])
+    useFrame(() => {
+        if (mouseEvents.clicking && nodeRef) {
 
+            switch (direction) {
+                case 'xy':
+                    nodeRef.current.position.x += (mouseEvents.clientX - mouseEvents.startPositionX) / 1000
+                    nodeRef.current.position.y -= (mouseEvents.clientY - mouseEvents.startPositionY) / 1000
+                    // xrRef.current.position.x -= (mouseEvents.clientX - mouseEvents.startPositionX) / 10000
+                    // yrRef.current.position.x -= (mouseEvents.clientX - mouseEvents.startPositionX) / 10000
+                    // zrRef.current.position.x -= (mouseEvents.clientX - mouseEvents.startPositionX) / 10000
+                    // xaRef.current.position.x -= (mouseEvents.clientX - mouseEvents.startPositionX) / 10000
+                    // yaRef.current.position.x -= (mouseEvents.clientX - mouseEvents.startPositionX) / 10000
+                    // zaRef.current.position.x -= (mouseEvents.clientX - mouseEvents.startPositionX) / 10000
+                    break;
+       
+                default:
+                    break;
+
+            }
+        }
+    }
+    )
+    useEffect(() => {
+        if (!mouseEvents.clicking && nodeRef?.current) {
+            setDirection(null)
+            changePosition()
+        }
+    }, [mouseEvents.clicking])
+
+    const changePosition = () => {
+        let newImages = [...images]
+        let newNode = newImages.find(node => node.id == nodeg)
+        if (newNode && nodeRef) { 
+                const newPosition =  [ nodeRef.current.position.y *-1, nodeRef.current.position.z  ,nodeRef.current.position.x *-1]
+                newNode.position =newPosition
+                setImages(newImages)
+        }
+    }
+console.log(tool);
 
     return (
         node &&
         <>
-            <mesh position={[node.position[2] * -1, node.position[0] * -1, node.position[1]]}>
+            <mesh ref={nodeRef} onPointerDown={() => {
+                if(edit && tool.type=='cross'){
+                    setDirection('xy')
+                }
+                    }}  position={[node.position[2] * -1, node.position[0] * -1, node.position[1]]}>
                 <planeGeometry args={[2, 1]} />
                 {/* <meshBasicMaterial map={map} /> */}
             </mesh>
@@ -44,7 +96,7 @@ export default function Node({ nodeg }) {
                         <mesh
                             onClick={() => {
                                 if (tool.type == 'pen' && edit) {
-                                    setNodeChild(node.id, child , node.position)
+                                    setNodeChild(node.id, child, node.position)
                                 }
                             }}
                             position={[
@@ -58,7 +110,7 @@ export default function Node({ nodeg }) {
                         </mesh>
                     )
             })}
-           
+
             {
                 node.childrens.map(child => {
                     if (child.child) {
@@ -83,12 +135,12 @@ export default function Node({ nodeg }) {
                             }
                         }
                         return (
-                            <Line 
-                            onPointerEnter={() => {
-                                if(tool.type == 'rubber' && edit && mouseEvents.clicking){
-                                    disconnectNodes(node, image)
-                                }
-                            }}
+                            <Line
+                                onPointerEnter={() => {
+                                    if (tool.type == 'rubber' && edit && mouseEvents.clicking) {
+                                        disconnectNodes(node, image)
+                                    }
+                                }}
                                 lineWidth={5}
                                 onClick={() => {
                                     if (tool.type == 'rubber' && edit) {
@@ -101,6 +153,7 @@ export default function Node({ nodeg }) {
                 }
                 )
             }
+              
         </>
     )
 }

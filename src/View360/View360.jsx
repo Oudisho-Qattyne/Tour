@@ -6,17 +6,14 @@ import Box from '../UI/Box.jsx'
 import Room from '../UI/Room.jsx'
 import { AppContext } from '../AppState.jsx'
 import SelectImage from '../UI/SelectImage.jsx'
-import Object3D from '../UI/Object3D/Object3D.jsx';
-
-
-
 export default function View360() {
-  const { image, setImage, setModel, images, setImages, NODE, deleteNode, edit, node, setNode , position , setFov , fov , rotate } = useContext(AppContext)
+  const { image, setImage, setModel, images, setImages, NODE, deleteNode, edit, node, setNode, position, setFov, fov, rotate, loading, setLoading, setRotate , state } = useContext(AppContext)
+  const [boxes, setBoxes] = useState([])
+  const [firstDistance, setFirstDistance] = useState(null)
+
   const addNode = (firstNode, direction) => {
     setModel(<SelectImage firstNode={firstNode} direction={direction} />)
   }
-
-  const [boxes, setBoxes] = useState([])
 
   const handleWheel = (e) => {
     setFov(prev => {
@@ -28,24 +25,27 @@ export default function View360() {
       }
     })
   }
-
   const handleTouch = async (e) => {
-    const ee = JSON.stringify(e)
-    alert(ee  , 'jsjsj')
-    
-    const touches = e.touches
-    if(touches.length == 2){
-      alert(JSON.stringify(e.touches.length))
-      const distance = Math.hypot(touches[0].clientX - touches[1].clientX , touches[0].clientY - touches[1].clientY)
+    if (e.touches.length == 2) {
+      setRotate(false)
+      const touches = e.touches
+      const distance = Math.hypot(touches[0]?.clientX - touches[1]?.clientX, touches[0]?.clientY - touches[1]?.clientY)
       setFov(prev => {
-        if ((prev + distance / 100) > 60 || (prev + distance / 100) < 1) {
-          return prev
+        if (prev - (distance - firstDistance) / 1000 * 40) {
+          if ((prev - (distance - firstDistance) / 10000 * 40) > 60 || (prev - (distance - firstDistance) / 10000 * 40) < 1) {
+            return prev
+          }
+          else {
+            return prev - ((distance - firstDistance) / 10000 * 40)
+          }
         }
         else {
-          return prev + distance / 100
+          return prev
         }
       })
-      
+    }
+    else{
+      setRotate(true)
     }
   }
 
@@ -60,6 +60,7 @@ export default function View360() {
             boxes.push(
               <Box rotation={node.childrens[i].direction.rotation} key={node.childrens[i].id} position={node.childrens[i].direction.location} onPress={() => {
                 const newNode = images.find(nodeL => nodeL.id == node.childrens[i].child)
+                setLoading(true)
 
                 setNode(newNode)
               }} />
@@ -97,20 +98,30 @@ export default function View360() {
 
 
   return (
-    <div className='relative w-full h-full flex flex-row'>
+    <div  onTouchEnd={() => setRotate(true)} onTouchStart={(e) => {
+      
+      if (e.touches.length == 2) {
+        setRotate(false)
+        const firstDistance = Math.hypot(e.touches[0]?.clientX - e.touches[1]?.clientX, e.touches[0]?.clientY - e.touches[1]?.clientY)
+        setFirstDistance(firstDistance)
 
+      }
+      else {
+        setRotate(true)
+
+      }
+
+    }} onTouchMove={handleTouch} className='relative w-full h-full flex flex-row'>
       {
 
         node &&
-        <Canvas onTouchMove={handleTouch} onWheel={handleWheel} className='relative w-full min-h-full'>
-          <OrbitControls enablePan={false}  enableRotate={rotate} enableZoom={false} />
-          <PerspectiveCamera makeDefault position={position} fov={60} />
+        <Canvas onWheel={handleWheel} className='relative w-full min-h-full'>
+          <OrbitControls enablePan={false} enableRotate={rotate} enableZoom={false} />
+          <PerspectiveCamera makeDefault position={position} />
           {
             boxes
           }
-          {
-            node?.objects?.map(object => <Object3D {...object} nodeId={node?.id}/>)
-          }
+
           <ambientLight intensity={1} />
           {/* <pointLight position={[0, 0, 0]} intensity={1}/> */}
           <Room image={node.image} />

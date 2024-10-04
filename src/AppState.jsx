@@ -3,6 +3,7 @@ import { BACK, BACK_LEFT, BACK_RIGTH, BOTTOM, BOTTOM_BACK, BOTTOM_BACK_LEFT, BOT
 import rubberIcon from './assets/icons/rubberIcon.png'
 import pencilIcon from './assets/icons/pencilIcon.png'
 import selectorIcon from './assets/icons/selectorIcon.png'
+import rotateIcon from './assets/icons/rotateIcon.png'
 export const AppContext = createContext()
 
 export const StateProvider = ({ children }) => {
@@ -191,7 +192,12 @@ const objects = {
         id: 1,
         type: 'color',
         value: '#FF0000'
-      }
+      },
+      texture:{
+        id:1,
+        type:'image',
+        value:''
+      },
     }
   },
   pointLight : {
@@ -287,7 +293,12 @@ const objects = {
         id: 1,
         type: 'color',
         value: '#FF0000'
-      }
+      },
+      texture:{
+        id:1,
+        type:'image',
+        value:''
+      },
     }
   },
   text:{
@@ -312,7 +323,7 @@ const objects = {
       args: {
         id: 1,
         type: 'array',
-        value: [0.1, 0, 0]
+        value: [0.1, 0]
       },
       rotationX: {
         id: 1,
@@ -349,6 +360,118 @@ const objects = {
         type:'number',
         value:0.1
       }
+    }
+  },
+  image:{
+    id: 1,
+    type: 'image',
+    fields: {
+      functionality:{
+        id:1,
+        type:'select_function',
+        value:[]
+      },
+      visible:{
+        id:1,
+        type:'checkbox',
+        value:true
+      },
+      position: {
+        id: 1,
+        type: 'array',
+        value: [-0.2, 0 , 0]
+      },
+      args: {
+        id: 1,
+        type: 'array',
+        value: [0.1, 0.07]
+      },
+      rotationX: {
+        id: 1,
+        type: 'number',
+        value: 0
+      },
+      rotationY: {
+        id: 1,
+        type: 'number',
+        value: 1.8
+      },
+      rotationZ: {
+        id: 1,
+        type: 'number',
+        value: 0
+      },
+      backgroundColor:{
+        id:1,
+        type : 'color',
+        value : '#C1C1C1'
+      },
+      image:{
+        id:1,
+        type:'image',
+        value:''
+      }
+    }
+  },
+  obj:{
+    id: 1,
+    type: 'obj',
+    fields: {
+      functionality:{
+        id:1,
+        type:'select_function',
+        value:[]
+      },
+      visible:{
+        id:1,
+        type:'checkbox',
+        value:true
+      },
+      position: {
+        id: 1,
+        type: 'array',
+        value: [-0.2, 0 , 0]
+      },
+      args: {
+        id: 1,
+        type: 'array',
+        value: [0.01, 0.01 , 0.01]
+      },
+      rotationX: {
+        id: 1,
+        type: 'number',
+        value: 0
+      },
+      rotationY: {
+        id: 1,
+        type: 'number',
+        value: 0
+      },
+      rotationZ: {
+        id: 1,
+        type: 'number',
+        value: 0
+      },
+      color:{
+        id:1,
+        type : 'color',
+        value : '#C1C1C1'
+      },
+      obj:{
+        id:1,
+        type:'obj',
+        value:''
+      },
+      material:{
+        id:1,
+        type:'image',
+        value:''
+      },
+      texture:{
+        id:1,
+        type:'image',
+        value:''
+      },
     }
   },
 }
@@ -615,7 +738,20 @@ const functions = [
       icon:pencilIcon
     }
   ])
+  const [tools360 , setTools360] = useState([
+    {
+      id: 1,
+      type: 'cross',
+      icon:selectorIcon
+    },
+    {
+      id: 2,
+      type: 'rotate',
+      icon:rotateIcon
+    },
+  ])
   const [tool, setTool] = useState(tools[1])
+  const [tool360 , setTool360] = useState(tools360[0])
   const [position, setPosition] = useState([0.1, 0, 0])
   const [mouseEvents, setMouseEvents] = useState({
     clientX: 0,
@@ -643,7 +779,6 @@ const functions = [
   const [firstNodeChild, setFirstNodeChild] = useState(null)
   const [secondNodeChild, setSecondNodeChild] = useState(null)
 const [sound , setSound] = useState(null)
-
 
 
   const deleteNode = (id) => {
@@ -891,7 +1026,10 @@ const addObject = ( nodeId , object) => {
       deleteObject,
       functions,
       sound,
-      setSound
+      setSound,
+      tools360,
+      tool360,
+      setTool360
 
     }}>
       {children}

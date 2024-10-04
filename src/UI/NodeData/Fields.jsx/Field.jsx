@@ -5,6 +5,8 @@ import ColorField from './FieldsTypes/ColorField';
 import TextField from './FieldsTypes/TextField';
 import CheckField from './FieldsTypes/CheckField';
 import SelectFunctionality from './FieldsTypes/SelectFunctionality';
+import ImageField from './FieldsTypes/ImageField';
+import ObjField from './FieldsTypes/ObjField';
 
 function Field(props) {
   switch (props.type) {
@@ -32,6 +34,14 @@ function Field(props) {
       return (
         <SelectFunctionality {...props} nodeId={props.nodeId} objectId={props.objectId} field={props.field} />
       )
+      case 'image':
+        return (
+          <ImageField {...props} nodeId={props.nodeId} objectId={props.objectId} field={props.field} />
+        )
+        case 'obj':
+          return (
+            <ObjField {...props} nodeId={props.nodeId} objectId={props.objectId} field={props.field} />
+          )
     default:
       break;
   }

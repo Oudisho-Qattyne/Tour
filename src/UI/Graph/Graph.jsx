@@ -34,7 +34,7 @@ function Graph() {
         images.length != 0 ?
 
           <Canvas className='relative w-full min-h-full'>
-            <OrbitControls enableRotate={false} target={[node.position[2] * -1, node.position[0] * -1, node.position[1]]} />
+            <OrbitControls enableRotate={false} />
             <PerspectiveCamera makeDefault position={[node.position[2] * -1, node.position[0] * -1, node.position[1] + 10]} />
             {/* <OrthographicCamera makeDefault position={[0, 0, 10]} zoom={10} /> */}
             <ambientLight intensity={0.1} />

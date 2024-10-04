@@ -6,10 +6,12 @@ import { Euler } from 'three';
 import Cube from './ObjectTypes/Cube';
 import Sphere from './ObjectTypes/Sphere';
 import TextObject from './ObjectTypes/TextObject';
+import ImageObject from './ObjectTypes/ImageObject';
+import Obj from './ObjectTypes/Obj';
 
 function Object3D(props) {
 
-    const { images, setImages, selectedObjects, mouseEvents, setRotate, setSelectedObjects, edit, findMax , setSound , setNode} = useContext(AppContext)
+    const { images, setImages, selectedObjects, mouseEvents, setRotate, setSelectedObjects, edit, findMax, setSound, setNode, tool360 } = useContext(AppContext)
     const [object, setObject] = useState(null)
     const [direction, setDirection] = useState(null)
     const objectRef = useRef(null)
@@ -42,6 +44,16 @@ function Object3D(props) {
                     <TextObject {...props} />
                 )
                 break;
+            case 'image':
+                setObject(
+                    <ImageObject {...props} />
+                )
+                break;
+            case 'obj':
+                setObject(
+                    <Obj {...props} />
+                )
+                break;
             default:
                 break;
         }
@@ -58,30 +70,42 @@ function Object3D(props) {
             switch (direction) {
                 case 'x':
                     objectRef.current.position.x -= (mouseEvents.clientX - mouseEvents.startPositionX) / 10000
-                    xrRef.current.position.x -= (mouseEvents.clientX - mouseEvents.startPositionX) / 10000
-                    yrRef.current.position.x -= (mouseEvents.clientX - mouseEvents.startPositionX) / 10000
-                    zrRef.current.position.x -= (mouseEvents.clientX - mouseEvents.startPositionX) / 10000
-                    xaRef.current.position.x -= (mouseEvents.clientX - mouseEvents.startPositionX) / 10000
-                    yaRef.current.position.x -= (mouseEvents.clientX - mouseEvents.startPositionX) / 10000
-                    zaRef.current.position.x -= (mouseEvents.clientX - mouseEvents.startPositionX) / 10000
+                    if (tool360.type == 'rotate') {
+                        xrRef.current.position.x -= (mouseEvents.clientX - mouseEvents.startPositionX) / 10000
+                        yrRef.current.position.x -= (mouseEvents.clientX - mouseEvents.startPositionX) / 10000
+                        zrRef.current.position.x -= (mouseEvents.clientX - mouseEvents.startPositionX) / 10000
+                    }
+                    if (tool360.type == 'cross') {
+                        xaRef.current.position.x -= (mouseEvents.clientX - mouseEvents.startPositionX) / 10000
+                        yaRef.current.position.x -= (mouseEvents.clientX - mouseEvents.startPositionX) / 10000
+                        zaRef.current.position.x -= (mouseEvents.clientX - mouseEvents.startPositionX) / 10000
+                    }
                     break;
                 case 'y':
                     objectRef.current.position.y -= (mouseEvents.clientY - mouseEvents.startPositionY) / 10000
-                    xrRef.current.position.y -= (mouseEvents.clientY - mouseEvents.startPositionY) / 10000
-                    yrRef.current.position.y -= (mouseEvents.clientY - mouseEvents.startPositionY) / 10000
-                    zrRef.current.position.y -= (mouseEvents.clientY - mouseEvents.startPositionY) / 10000
-                    xaRef.current.position.y -= (mouseEvents.clientY - mouseEvents.startPositionY) / 10000
-                    yaRef.current.position.y -= (mouseEvents.clientY - mouseEvents.startPositionY) / 10000
-                    zaRef.current.position.y -= (mouseEvents.clientY - mouseEvents.startPositionY) / 10000
+                    if (tool360.type == 'rotate') {
+                        xrRef.current.position.y -= (mouseEvents.clientY - mouseEvents.startPositionY) / 10000
+                        yrRef.current.position.y -= (mouseEvents.clientY - mouseEvents.startPositionY) / 10000
+                        zrRef.current.position.y -= (mouseEvents.clientY - mouseEvents.startPositionY) / 10000
+                    }
+                    if (tool360.type == 'cross') {
+                        xaRef.current.position.y -= (mouseEvents.clientY - mouseEvents.startPositionY) / 10000
+                        yaRef.current.position.y -= (mouseEvents.clientY - mouseEvents.startPositionY) / 10000
+                        zaRef.current.position.y -= (mouseEvents.clientY - mouseEvents.startPositionY) / 10000
+                    }
                     break;
                 case 'z':
                     objectRef.current.position.z -= (mouseEvents.clientX - mouseEvents.startPositionX) / 10000
-                    xrRef.current.position.z -= (mouseEvents.clientX - mouseEvents.startPositionX) / 10000
-                    yrRef.current.position.z -= (mouseEvents.clientX - mouseEvents.startPositionX) / 10000
-                    zrRef.current.position.z -= (mouseEvents.clientX - mouseEvents.startPositionX) / 10000
-                    xaRef.current.position.z -= (mouseEvents.clientX - mouseEvents.startPositionX) / 10000
-                    yaRef.current.position.z -= (mouseEvents.clientX - mouseEvents.startPositionX) / 10000
-                    zaRef.current.position.z -= (mouseEvents.clientX - mouseEvents.startPositionX) / 10000
+                    if (tool360.type == 'rotate') {
+                        xrRef.current.position.z -= (mouseEvents.clientX - mouseEvents.startPositionX) / 10000
+                        yrRef.current.position.z -= (mouseEvents.clientX - mouseEvents.startPositionX) / 10000
+                        zrRef.current.position.z -= (mouseEvents.clientX - mouseEvents.startPositionX) / 10000
+                    }
+                    if (tool360.type == 'cross') {
+                        xaRef.current.position.z -= (mouseEvents.clientX - mouseEvents.startPositionX) / 10000
+                        yaRef.current.position.z -= (mouseEvents.clientX - mouseEvents.startPositionX) / 10000
+                        zaRef.current.position.z -= (mouseEvents.clientX - mouseEvents.startPositionX) / 10000
+                    }
                     break;
                 case 'rotateX':
                     objectRef.current.rotation.x -= (mouseEvents.clientX - mouseEvents.startPositionX) / 10000
@@ -127,10 +151,10 @@ function Object3D(props) {
     //     r.current.rotation.y += 0.01;
     // })
 
-        // const playSound = () => {
-        //   const audio = new Audio('sound.m4a');
-        //   audio.play();
-        // };
+    // const playSound = () => {
+    //   const audio = new Audio('sound.m4a');
+    //   audio.play();
+    // };
     const onPress = () => {
         console.log(props.fields.functionality.value);
         props.fields.functionality.value.map(func => {
@@ -140,30 +164,30 @@ function Object3D(props) {
                     break;
                 case 'show-object':
                     let newNodes = [...images]
-                    let newNode = newNodes.find(node => node.id == props.nodeId )
-                    if(newNode) {
+                    let newNode = newNodes.find(node => node.id == props.nodeId)
+                    if (newNode) {
                         let newObj = newNode.objects.find(obj => obj.id == func.objectId)
-                        if(newObj){
-                            newObj.fields.visible.value = !newObj.fields.visible.value 
+                        if (newObj) {
+                            newObj.fields.visible.value = !newObj.fields.visible.value
                             setImages(newNodes)
                         }
                     }
                     break;
-                    case 'move-to-node':
-                        const node = images.find(node => node.id == func.nodeId)
-                        if(node){
-                            setNode(node)
-                        }
-                        break;
+                case 'move-to-node':
+                    const node = images.find(node => node.id == func.nodeId)
+                    if (node) {
+                        setNode(node)
+                    }
+                    break;
                 default:
                     break;
             }
         })
-        
+
     }
 
 
-    
+
     return (
 
         <>
@@ -172,7 +196,7 @@ function Object3D(props) {
                     setSelectedObjects(prev => [...prev, props.id])
                     // toggleObjectFromSelection(props.id)
                 }
-                else{
+                else {
                     onPress()
                 }
             }} castShadow receiveShadow ref={objectRef} rotation-x={props.fields.rotationX.value} rotation-y={props.fields.rotationY.value} rotation-z={props.fields.rotationZ.value} position={props.fields.position.value} >
@@ -184,52 +208,62 @@ function Object3D(props) {
             {
                 selectedObjects.find(objectId => objectId == props.id) && edit && props.fields.visible.value &&
                 <>
-                    <mesh castShadow receiveShadow position={props.fields.position.value} ref={zaRef} onPointerDown={() => {
-                        setDirection('z')
-                        setRotate(false)
-                    }}>
+                    {
+                        tool360.type == 'cross' &&
+                        <>
+                            <mesh castShadow receiveShadow position={props.fields.position.value} ref={zaRef} onPointerDown={() => {
+                                setDirection('z')
+                                setRotate(false)
+                            }}>
 
-                        <boxGeometry args={[0.01, 0.01, 1]} />
-                        <meshBasicMaterial color="red" />
+                                <boxGeometry args={[0.005, 0.005, 1]} />
+                                <meshBasicMaterial color="red" />
 
-                    </mesh>
-                    <mesh castShadow receiveShadow position={props.fields.position.value} ref={yaRef} onPointerDown={() => {
-                        setDirection('y')
-                        setRotate(false)
-                    }} >
-                        <boxGeometry args={[0.01, 1, 0.01]} />
-                        <meshBasicMaterial color="blue" />
-                    </mesh>
-                    <mesh castShadow receiveShadow position={props.fields.position.value} ref={xaRef} onPointerDown={() => {
-                        setDirection('x')
-                        setRotate(false)
-                    }}>
+                            </mesh>
+                            <mesh castShadow receiveShadow position={props.fields.position.value} ref={yaRef} onPointerDown={() => {
+                                setDirection('y')
+                                setRotate(false)
+                            }} >
+                                <boxGeometry args={[0.005, 1, 0.005]} />
+                                <meshBasicMaterial color="blue" />
+                            </mesh>
+                            <mesh castShadow receiveShadow position={props.fields.position.value} ref={xaRef} onPointerDown={() => {
+                                setDirection('x')
+                                setRotate(false)
+                            }}>
 
-                        <boxGeometry args={[1, 0.01, 0.01]} />
-                        <meshBasicMaterial color="green" />
+                                <boxGeometry args={[1, 0.005, 0.005]} />
+                                <meshBasicMaterial color="green" />
 
-                    </mesh>
-                    <mesh castShadow receiveShadow ref={zrRef} position={props.fields.position.value} onPointerDown={() => {
-                        setRotate(false)
-                        setDirection('rotateZ')
-                    }}>
-                        <torusGeometry args={props.fields?.args?.value ? props.type == 'sphere' ? [props.fields.args.value[0], 0.005, 3, 100] : [findMax(props.fields.args.value), 0.005, 3, 100] : [0.1, 0.005, 3, 100]} />
-                        <meshBasicMaterial color="red" />
-                    </mesh>
-                    <mesh castShadow receiveShadow ref={xrRef} position={props.fields.position.value} onPointerDown={() => {
-                        setRotate(false)
-                        setDirection('rotateX')
-                    }} rotation={new Euler(0, Math.PI / 2, 0)} >
-                        <torusGeometry args={props.fields?.args?.value ? props.type == 'sphere' ? [props.fields.args.value[0], 0.005, 3, 100] : [findMax(props.fields.args.value), 0.005, 3, 100] : [0.1, 0.005, 3, 100]} />
-                        <meshBasicMaterial color="green" />
-                    </mesh>
-                    <mesh castShadow receiveShadow ref={yrRef} position={props.fields.position.value} onPointerDown={() => {
-                        setRotate(false)
-                        setDirection('rotateY')
-                    }} rotation={new Euler(Math.PI / 2, 0, 0)} >
-                        <torusGeometry args={props.fields?.args?.value ? props.type == 'sphere' ? [props.fields.args.value[0], 0.005, 3, 100] : [findMax(props.fields.args.value), 0.005, 3, 100] : [0.1, 0.005, 3, 100]} />
-                        <meshBasicMaterial color="blue" />
-                    </mesh>
+                            </mesh>
+                        </>
+                    }
+                    {
+                        tool360.type == 'rotate' &&
+                        <>
+                            <mesh castShadow receiveShadow ref={zrRef} position={props.fields.position.value} onPointerDown={() => {
+                                setRotate(false)
+                                setDirection('rotateZ')
+                            }}>
+                                <torusGeometry args={props.fields?.args?.value ? props.type == 'sphere' ? [props.fields.args.value[0], 0.002, 3, 100] : [findMax(props.fields.args.value), 0.002, 3, 100] : [0.1, 0.005, 3, 100]} />
+                                <meshBasicMaterial color="red" />
+                            </mesh>
+                            <mesh castShadow receiveShadow ref={xrRef} position={props.fields.position.value} onPointerDown={() => {
+                                setRotate(false)
+                                setDirection('rotateX')
+                            }} rotation={new Euler(0, Math.PI / 2, 0)} >
+                                <torusGeometry args={props.fields?.args?.value ? props.type == 'sphere' ? [props.fields.args.value[0], 0.002, 3, 100] : [findMax(props.fields.args.value), 0.002, 3, 100] : [0.1, 0.005, 3, 100]} />
+                                <meshBasicMaterial color="green" />
+                            </mesh>
+                            <mesh castShadow receiveShadow ref={yrRef} position={props.fields.position.value} onPointerDown={() => {
+                                setRotate(false)
+                                setDirection('rotateY')
+                            }} rotation={new Euler(Math.PI / 2, 0, 0)} >
+                                <torusGeometry args={props.fields?.args?.value ? props.type == 'sphere' ? [props.fields.args.value[0], 0.002, 3, 100] : [findMax(props.fields.args.value), 0.002, 3, 100] : [0.1, 0.005, 3, 100]} />
+                                <meshBasicMaterial color="blue" />
+                            </mesh>
+                        </>
+                    }
                 </>
             }
         </>

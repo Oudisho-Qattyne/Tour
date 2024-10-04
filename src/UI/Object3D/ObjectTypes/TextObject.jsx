@@ -4,7 +4,11 @@ import React from 'react'
 function TextObject(props) {
     return (
         <>
-            <boxGeometry  args={props.fields.args.value}  />
+        <mesh position={[0 , 0 , -0.01]}>
+
+            <planeGeometry  args={[props.fields.args.value[0] , props.fields.args.value[1]]} />
+        </mesh>
+
             <Text fontSize={props.fields.fontSize.value} color={props.fields.color.value} font=''>{props.fields.text.value}</Text>
             {
                 props.fields.backgroundColor.value &&
