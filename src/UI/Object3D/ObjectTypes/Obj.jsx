@@ -16,7 +16,7 @@ function Obj(props) {
     //     })
     //   }, [props?.fields?.color?.value])
     useEffect(() => {
-        if(props?.fields?.texture.value){
+        if(props?.fields?.texture?.value){
             const textureLoader = new TextureLoader()
                 textureLoader.load(props?.fields?.texture.value, texture => {
                     texture.minFilter = NearestFilter

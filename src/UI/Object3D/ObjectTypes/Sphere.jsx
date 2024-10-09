@@ -4,7 +4,7 @@ import { NearestFilter, TextureLoader } from 'three'
 function Sphere(props) {
     const [texture , setTexture] = useState(null)
     useEffect(() => {
-        if(props?.fields?.texture.value){
+        if(props?.fields?.texture?.value){
             const textureLoader = new TextureLoader()
                 textureLoader.load(props?.fields?.texture.value, texture => {
                     texture.minFilter = NearestFilter
@@ -13,7 +13,7 @@ function Sphere(props) {
                     setTexture(texture)
                 })
         }
-    } , [props?.fields?.texture.value])
+    } , [props?.fields?.texture?.value])
     return (
         <>
             <sphereGeometry  args={props.fields.args.value}  />
